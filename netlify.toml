@@ -1,0 +1,24 @@
+# Deploy target: telemetrylab.atlas.motionapplied.com
+#
+# The build is one Python script and no dependencies. The hero lap is real
+# telemetry from the lab's simulator, exported once by build/refresh_lap.py and
+# committed as public/lap.json - so this repository builds on its own, with no
+# checkout of the lab and nothing to install.
+
+[build]
+  publish = "dist"
+  command = "python build/build.py"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/lap.json"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
