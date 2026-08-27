@@ -27,6 +27,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "public", "lap.json")
 TARGET_POINTS = 520
+CHANNEL_POINTS = 300
 
 
 def main() -> int:
@@ -79,12 +80,46 @@ def main() -> int:
         ],
     }
 
+    # Channel traces for the course catalogue.
+    #
+    # Stepped through a full lap exactly as the producer does, so these are the
+    # same numbers a learner streams in Module 1 - not a decorative waveform
+    # drawn to look like telemetry.
+    sim2 = LapSimulator(circuit=SANDBOURNE, car=GT3, driver=REFERENCE_DRIVER, rate_hz=60)
+    series: dict[str, list[float]] = {}
+    for _ in range(int(sim2.lap_time * 60) + 1):
+        values, _crossed = sim2.step()
+        for k, v in values.items():
+            series.setdefault(k, []).append(float(v))
+
+    from atlas_lab.channels import BY_KEY
+    channels = {}
+    for key in ("Speed", "Throttle", "Brake", "SteeringAngle", "RPM", "LatAccel"):
+        raw = series.get(key) or []
+        if not raw:
+            continue
+        cstep = max(1, len(raw) // CHANNEL_POINTS)
+        pts = raw[::cstep]
+        lo, hi = min(pts), max(pts)
+        span = (hi - lo) or 1.0
+        defn = BY_KEY[key]
+        channels[key] = {
+            "units": defn.units,
+            "rate": defn.frequency,
+            "min": round(lo, 3),
+            "max": round(hi, 3),
+            # normalised 0..1 for drawing; min/max above carry the real values
+            "v": [round((x - lo) / span, 4) for x in pts],
+        }
+
+    lap["channels"] = channels
+
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(lap, f, separators=(",", ":"))
 
     size = os.path.getsize(OUT) / 1024
-    print(f"{len(lap['points'])} points, {size:.1f} kB")
+    print(f"{len(lap['points'])} points, {len(lap['channels'])} channels, {size:.1f} kB")
     print(f"{lap['circuit']} - {lap['lengthM']} m - {lap['lapTime']}s - "
           f"{round(v_min * 3.6)}-{round(v_max * 3.6)} km/h")
     return 0
