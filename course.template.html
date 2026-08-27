@@ -1,0 +1,87 @@
+<main id="main">
+
+<section class="course-hero">
+  <div class="wrap">
+    <p class="crumbs">
+      <a href="../../">ATLAS Telemetry Lab</a> &nbsp;/&nbsp;
+      <a href="../../#catalogue">Courses</a> &nbsp;/&nbsp;
+      {number}
+    </p>
+    <span class="status {status_class}">{status_label}</span>
+    <h1>{name}</h1>
+    <p class="standfirst">{summary}</p>
+
+    <div class="cta-row">
+      <a class="btn" href="../../#start">Get your copy</a>
+      <a class="btn ghost" href="../../#faq">Questions</a>
+    </div>
+
+    <dl class="course-facts">
+      <div><dt>Modules</dt><dd>{module_count}</dd></div>
+      <div><dt>Time</dt><dd>{time}</dd></div>
+      <div><dt>Cost</dt><dd>Free</dd></div>
+      <div><dt>Licence needed</dt><dd>None</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">What it covers</p>
+    <h2>Four things a bare Kafka topic has no concept of.</h2>
+    <p>
+      You can move numbers with Kafka alone. What you cannot do is say what a
+      number <em>is</em> — its units, its valid range, how fast it arrives, which
+      session it belongs to, and what happened during that session. Each module
+      here is one of those, taught by making you build it and then breaking it.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <ol class="steps">
+{steps}
+    </ol>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">How it runs</p>
+    <h2>You work in your own repository.</h2>
+    <p>
+      Take a copy of the lab from the template — it becomes a repository you own,
+      with the validation bot already in it. Open a Codespace on it, or clone it
+      and run locally if you would rather.
+    </p>
+    <p>
+      Each module asks for a change. Run <code>lab check</code> to grade it on
+      your own machine in seconds, then <code>lab submit</code> to branch, push
+      and open a pull request. The bot runs the whole pipeline again on a clean
+      machine, comments with what it found, and on a pass advances you to the
+      next module and merges.
+    </p>
+    <p>
+      <code>lab check</code> runs the identical code the bot runs, so a pass
+      locally is a pass in CI. There is no reason to ever push a guess.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">Prerequisites</p>
+    <h2>What you should already know.</h2>
+    <p>
+      Enough Python to edit a script and enough command line to run
+      <code>docker compose up</code>. Module 4 asks you to write a consumer, in
+      any language you like — a reference implementation in JavaScript is in the
+      repository to read if you want it.
+    </p>
+    <p>
+      You do not need Kafka experience, motorsport knowledge, or any hardware.
+      The car is simulated and the data is synthetic.
+    </p>
+  </div>
+</section>
+
+</main>

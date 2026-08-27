@@ -15,6 +15,12 @@
 #
 # channel: a channel name present in public/lap.json, drawn in the lane.
 #          Only used when status = "open".
+#
+# slug:    gives the course its own page at /courses/<slug>/. Omit it and the
+#          course appears in the catalogue but gets no page of its own, which
+#          is what you want for one that does not exist yet.
+# time:    shown on the course page.
+# description: the meta description and the JSON-LD description for that page.
 
 [[courses]]
 id           = "course-01"
@@ -25,6 +31,9 @@ status_label = "Open now"
 summary      = "The pipeline, and the four ideas a bare Kafka topic has no concept of."
 meta         = "4 modules · about an evening · free"
 channel      = "Speed"
+slug         = "introduction-to-open-streaming-foundations"
+time         = "About an evening"
+description  = "A free, four-module course in real-time telemetry. Run a broker, a streaming API and a synthetic race car, write code against them, and have a bot grade your work. No licence, nothing to install."
 
   [[courses.modules]]
   label   = "Module 01"

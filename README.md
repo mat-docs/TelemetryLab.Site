@@ -1,20 +1,53 @@
 # ATLAS Telemetry Lab — site
 
-The landing page for **telemetrylab.atlas.motionapplied.com**. Its only job is
-to explain what the lab is and send people to the exercise template.
+The site for **telemetrylab.atlas.motionapplied.com**: a landing page, a page
+per course, and the machine-readable files that let search engines and AI
+assistants describe the courses accurately rather than guess.
 
 This is deliberately a **separate repository from the exercise**. The exercise
 is a GitHub template: every learner gets a byte-for-byte copy of it. Anything
-that lives in the template gets copied into every learner's repository, shows up
-in their file tree, and then goes stale the moment we change it. A marketing
-page has no business being there — and keeping it here means we can redeploy the
-site as often as we like without touching a template that people are mid-way
-through.
+that lives in the template gets copied into every learner's repository and then
+goes stale the moment we change it.
+
+## Layout
+
+```
+courses.toml              the catalogue — the source of truth for courses
+index.template.html       landing page body
+course.template.html      course page body
+partials/nav.html         shared header
+partials/footer.html      shared footer
+styles.css                all styles, inlined at build
+app.js                    hero animation + channel lanes, inlined at build
+build/build.py            assembles pages, structured data, robots, sitemap, llms.txt
+build/og.py               draws dist/og.png from the real lap
+build/refresh_lap.py      re-exports public/lap.json from the lab's simulator
+```
+
+## Build
+
+```bash
+python build/build.py
+```
+
+No dependencies — `tomllib` and `zlib` are standard library. Output:
+
+| Output | What it is |
+|---|---|
+| `dist/index.html` | Landing page |
+| `dist/courses/<slug>/index.html` | One per course with a `slug` |
+| `dist/404.html` | `noindex`, kept out of the sitemap |
+| `dist/robots.txt` | Allows the AI crawlers explicitly — see below |
+| `dist/sitemap.xml` | Generated from the pages actually built |
+| `dist/llms.txt` | Plain-text brief for assistants ([llmstxt.org](https://llmstxt.org)) |
+| `dist/og.png` | Social card, 1200×630, drawn from the real lap |
+| `dist/artifact.html` | Landing page without the document wrapper, for review |
 
 ## Adding or opening a course
 
-Edit [`courses.toml`](courses.toml) and rebuild. The catalogue section is
-generated from it — there is no course markup in the template.
+Edit [`courses.toml`](courses.toml) and rebuild. The catalogue, the course
+pages, the sitemap, the structured data and `llms.txt` all come from it — there
+is no course markup anywhere in the templates.
 
 ```toml
 [[courses]]
@@ -26,6 +59,9 @@ status_label = "Open now"
 summary      = "..."
 meta         = "3 modules · a weekend · free"
 channel      = "Throttle"        # a channel in public/lap.json, drawn in the lane
+slug         = "producers-and-bridges"   # omit and the course gets no page of its own
+time         = "A weekend"
+description  = "..."             # meta description + JSON-LD description
 
   [[courses.modules]]
   label   = "Module 01"
@@ -44,23 +80,27 @@ difference between "in development" and "planned"; the colours do not try to,
 because teal against grey measures ΔE 13.0 to normal vision — below the
 legibility floor.
 
-## Build
+## SEO and AI search
 
-```bash
-python build/build.py
-```
-
-No dependencies — `tomllib` is in the standard library. Two outputs:
-
-| Output | For |
-|---|---|
-| `dist/index.html` | Netlify — a complete document |
-| `dist/artifact.html` | Publishing as an Artifact for review — content only, no wrapper |
+- **Structured data** — `Organization`, `WebSite`, `ItemList`, `Course` and
+  `BreadcrumbList`, plus `FAQPage` **generated from the page's own `<details>`
+  blocks** rather than a second copy of the questions, so the markup cannot
+  claim something the page does not say.
+- **`robots.txt` allows the AI crawlers by name** — GPTBot, ClaudeBot,
+  PerplexityBot, Google-Extended and the rest. Blocking them would mean those
+  assistants cannot cite the site, and being the answer to "how do I learn
+  real-time telemetry" is most of the point of building it.
+- **`llms.txt`** states the facts an assistant would otherwise guess at: that it
+  is free, that no licence is needed, what the stack is, how grading works, and
+  that there is no certificate. Everything in it is checkable against the lab
+  repository.
+- **The FAQ is real content first.** The eight questions are the ones engineers
+  actually ask, answered in 40–60 words each so a passage stands on its own.
 
 ## The hero lap is real
 
-The animated lap is actual telemetry from the lab's simulator — the same code a
-learner runs in Module 1 — not a decorative squiggle. It is exported once and
+The animated lap and the social card are actual telemetry from the lab's
+simulator — the same code a learner runs in Module 1. It is exported once and
 committed as `public/lap.json`, so this repository builds on its own.
 
 Refresh it only when the simulator changes:

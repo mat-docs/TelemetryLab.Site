@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 """
-Build the static site.
+Build the site.
 
-Two outputs from one template, because they have different rules:
+Pages are assembled here rather than written by hand, so the nav, the footer,
+the head and the structured data cannot drift apart between them:
 
-  dist/index.html    a complete document, for Netlify
-  dist/artifact.html the same content without the document wrapper, for
-                     publishing as an Artifact for review
+    dist/index.html                     the landing page
+    dist/courses/<slug>/index.html      one per course that has a slug
+    dist/404.html
+    dist/robots.txt  sitemap.xml  llms.txt
+    dist/og.png                          social card, drawn from the real lap
+    dist/artifact.html                   the landing page without the document
+                                         wrapper, for publishing as an Artifact
 
-The lap data is inlined rather than fetched. It is 23 kB, it removes a request
-and a failure mode, and it means the page works from a file:// URL or anywhere
-a strict CSP blocks fetches.
+Everything is inlined — CSS, JS, the lap data — because the whole site is three
+documents and inlining removes a request, a failure mode, and any question of
+whether a strict CSP will allow the fetch.
 """
 
 from __future__ import annotations
 
 import html
+import json
 import os
 import shutil
 import sys
@@ -23,32 +29,70 @@ import tomllib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(HERE, "..")
-TEMPLATE = os.path.join(SITE, "index.template.html")
-COURSES = os.path.join(SITE, "courses.toml")
-LAP = os.path.join(SITE, "public", "lap.json")
 DIST = os.path.join(SITE, "dist")
+PUBLIC = os.path.join(SITE, "public")
+
+ORIGIN = "https://telemetrylab.atlas.motionapplied.com"
+SITE_NAME = "ATLAS Telemetry Lab"
+PUBLISHER = "Motion Applied"
+LAB_REPO = "https://github.com/motionapplied/atlas-telemetry-lab"
 
 DOCUMENT = """<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Learn to build on an open, real-time telemetry platform — by building on it. Nine modules, automatically assessed. Free, no licence, nothing to install.">
+<title>{title}</title>
+<meta name="description" content="{description}">
+<link rel="canonical" href="{canonical}">
+<meta name="robots" content="{robots}">
 <meta name="theme-color" content="#0A0D0F">
-<meta property="og:title" content="ATLAS Telemetry Lab">
-<meta property="og:description" content="A real-time telemetry platform, running in your browser with nothing installed.">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:site_name" content="{site_name}">
+<meta property="og:title" content="{og_title}">
+<meta property="og:description" content="{description}">
 <meta property="og:type" content="website">
-{head}
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{origin}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A lap of a simulated circuit, drawn from real telemetry and coloured by speed.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{og_title}">
+<meta name="twitter:description" content="{description}">
+<meta name="twitter:image" content="{origin}/og.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230A0D0F'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23ED6D20' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+
+<style>
+{css}
+</style>
+
+<script type="application/ld+json">
+{jsonld}
+</script>
 </head>
 <body>
+{nav}
 {body}
+{footer}
+<script>
+{js}
+</script>
 </body>
 </html>
 """
 
 
-def esc(s: str) -> str:
+def esc(s) -> str:
     return html.escape(str(s), quote=True)
+
+
+# --- the catalogue ----------------------------------------------------------
 
 
 def render_catalogue(courses: list[dict]) -> str:
@@ -62,18 +106,21 @@ def render_catalogue(courses: list[dict]) -> str:
     out = []
     for c in courses:
         open_ = c.get("status") == "open"
-        cls = "course" if open_ else "course dark"
         lane = (
             f'<div class="lane" data-channel="{esc(c.get("channel", ""))}"></div>'
             if open_ else
             '<div class="lane" data-nosignal="1"></div>'
         )
-        out.append(f"""      <article class="{cls}" id="{esc(c['id'])}">
+        name = esc(c["name"])
+        if c.get("slug"):
+            name = f'<a href="courses/{esc(c["slug"])}/">{name}</a>'
+
+        out.append(f"""      <article class="{'course' if open_ else 'course dark'}" id="{esc(c['id'])}">
         <div class="course-row">
           <div class="course-id">
             <span class="course-no">{esc(c['number'])}</span>
             <span class="status {'open' if open_ else 'dark'}">{esc(c['status_label'])}</span>
-            <h3 class="course-name">{esc(c['name'])}</h3>
+            <h3 class="course-name">{name}</h3>
             <p class="course-summary">{esc(c['summary'])}</p>
             <p class="course-meta">{esc(c['meta'])}</p>
           </div>
@@ -91,57 +138,390 @@ def render_catalogue(courses: list[dict]) -> str:
           </li>""" for m in modules
             )
             out.append(f'        <ul class="modules">\n{items}\n        </ul>')
-
         out.append("      </article>")
     return "\n".join(out)
 
 
-def main() -> int:
-    if not os.path.exists(LAP):
-        print("lap.json is missing. Run site/build/export_lap.py first.", file=sys.stderr)
-        return 1
+def render_steps(modules: list[dict]) -> str:
+    return "\n".join(
+        f"""      <li>
+        <span class="n">{esc(m['label'])}</span>
+        <div>
+          <h3>{esc(m['title'])}</h3>
+          <p>{esc(m['summary'])}</p>
+          <p class="g">{esc(m['graded'])}</p>
+        </div>
+      </li>""" for m in modules
+    )
 
-    with open(TEMPLATE, encoding="utf-8") as f:
-        template = f.read()
-    with open(LAP, encoding="utf-8") as f:
-        lap = f.read().strip()
 
-    with open(COURSES, "rb") as f:
-        courses = tomllib.load(f)["courses"]
+# --- structured data --------------------------------------------------------
+#
+# Course, ItemList and FAQPage are the three types that actually describe what
+# this site is. They are what lets a search engine or an assistant answer "is
+# there a free course on telemetry streaming" with this page rather than with a
+# guess about it.
 
-    content = template.replace("__LAP_DATA__", lap)
-    if "__CATALOGUE__" not in content:
-        print("index.template.html has no __CATALOGUE__ placeholder.", file=sys.stderr)
-        return 1
-    content = content.replace("__CATALOGUE__", render_catalogue(courses))
 
-    os.makedirs(DIST, exist_ok=True)
+def org() -> dict:
+    return {
+        "@type": "Organization",
+        "@id": f"{ORIGIN}/#org",
+        "name": PUBLISHER,
+        "url": "https://www.motionapplied.com",
+    }
 
-    # The artifact wants content only - no doctype, html, head or body tags.
-    artifact_path = os.path.join(DIST, "artifact.html")
-    with open(artifact_path, "w", encoding="utf-8") as f:
+
+def course_jsonld(c: dict) -> dict:
+    d = {
+        "@type": "Course",
+        "@id": f"{ORIGIN}/courses/{c['slug']}/#course",
+        "name": c["name"],
+        "description": c.get("description", c["summary"]),
+        "url": f"{ORIGIN}/courses/{c['slug']}/",
+        "provider": org(),
+        "inLanguage": "en",
+        "isAccessibleForFree": True,
+        "teaches": [m["title"] for m in c.get("modules", [])],
+        "educationalLevel": "Intermediate",
+        "learningResourceType": "Course",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "GBP",
+            "availability": "https://schema.org/InStock",
+            "category": "Free",
+        },
+        "hasCourseInstance": {
+            "@type": "CourseInstance",
+            "courseMode": "online",
+            "courseWorkload": "PT4H",
+        },
+    }
+    return d
+
+
+def faq_jsonld(body: str) -> dict | None:
+    """Build FAQPage entries from the page's own <details> blocks.
+
+    Generated from the rendered markup rather than a second copy of the
+    questions, so the structured data cannot claim something the page does not
+    say — which is the usual way FAQ schema goes wrong.
+    """
+    import re
+    qs = re.findall(
+        r"<summary>(.*?)</summary>\s*<p class=\"a\">(.*?)</p>", body, re.S
+    )
+    if not qs:
+        return None
+    clean = lambda t: " ".join(re.sub(r"<[^>]+>", "", t).split())
+    return {
+        "@type": "FAQPage",
+        "@id": f"{ORIGIN}/#faq",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": clean(q),
+                "acceptedAnswer": {"@type": "Answer", "text": clean(a)},
+            }
+            for q, a in qs
+        ],
+    }
+
+
+# --- page assembly ----------------------------------------------------------
+
+
+def read(*parts: str) -> str:
+    with open(os.path.join(SITE, *parts), encoding="utf-8") as f:
+        return f.read()
+
+
+def write(rel: str, content: str) -> None:
+    path = os.path.join(DIST, rel)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(content)
 
-    # Split the template's head-ish preamble (title, fonts, styles) from the
-    # body so the standalone document nests them correctly.
-    marker = '<div class="hero">'
-    idx = content.index(marker)
-    head, body = content[:idx].rstrip(), content[idx:]
 
-    with open(os.path.join(DIST, "index.html"), "w", encoding="utf-8") as f:
-        f.write(DOCUMENT.format(head=head, body=body))
+def main() -> int:
+    lap_path = os.path.join(PUBLIC, "lap.json")
+    if not os.path.exists(lap_path):
+        print("public/lap.json is missing. Run build/refresh_lap.py.", file=sys.stderr)
+        return 1
 
-    # Anything else in public/ ships as-is.
-    public = os.path.join(SITE, "public")
-    for name in os.listdir(public):
-        src = os.path.join(public, name)
+    css = read("styles.css")
+    js = read("app.js").replace("__LAP_DATA__", read("public", "lap.json").strip())
+    nav_t = read("partials", "nav.html")
+    foot_t = read("partials", "footer.html")
+    courses = tomllib.load(open(os.path.join(SITE, "courses.toml"), "rb"))["courses"]
+
+    os.makedirs(DIST, exist_ok=True)
+    pages: list[tuple[str, str]] = []      # (url path, changefreq) for the sitemap
+
+    def page(rel: str, *, body: str, title: str, description: str, path: str,
+             jsonld: list, og_title: str | None = None, robots: str = "index,follow",
+             depth: int = 0) -> None:
+        root = "../" * depth if depth else ""
+        doc = DOCUMENT.format(
+            title=esc(title),
+            og_title=esc(og_title or title),
+            description=esc(description),
+            canonical=f"{ORIGIN}{path}",
+            origin=ORIGIN,
+            site_name=SITE_NAME,
+            robots=robots,
+            css=css,
+            js=js,
+            nav=nav_t.replace("{root}", root or "/"),
+            footer=foot_t.replace("{root}", root or "/"),
+            body=body,
+            jsonld=json.dumps(
+                {"@context": "https://schema.org", "@graph": jsonld},
+                indent=2, ensure_ascii=False,
+            ),
+        )
+        write(rel, doc)
+        if robots.startswith("index"):
+            pages.append((path, "weekly" if path == "/" else "monthly"))
+
+    # --- landing page -------------------------------------------------------
+    home_body = read("index.template.html").replace(
+        "__CATALOGUE__", render_catalogue(courses)
+    )
+    home_graph = [
+        org(),
+        {
+            "@type": "WebSite",
+            "@id": f"{ORIGIN}/#site",
+            "name": SITE_NAME,
+            "url": f"{ORIGIN}/",
+            "publisher": org(),
+            "inLanguage": "en",
+        },
+        {
+            "@type": "ItemList",
+            "@id": f"{ORIGIN}/#catalogue",
+            "name": "Course catalogue",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": i + 1,
+                    "name": c["name"],
+                    **({"url": f"{ORIGIN}/courses/{c['slug']}/"} if c.get("slug") else {}),
+                }
+                for i, c in enumerate(courses)
+            ],
+        },
+    ]
+    fq = faq_jsonld(home_body)
+    if fq:
+        home_graph.append(fq)
+    home_graph += [course_jsonld(c) for c in courses if c.get("slug")]
+
+    page(
+        "index.html",
+        body=home_body,
+        title="ATLAS Telemetry Lab",
+        og_title="ATLAS Telemetry Lab",
+        description=(
+            "Free courses in real-time telemetry engineering. Run a broker, a "
+            "streaming API and a synthetic race car in a browser tab, write code "
+            "against them, and have a bot grade your work. No licence, nothing to install."
+        ),
+        path="/",
+        jsonld=home_graph,
+    )
+
+    # --- one page per course that has a slug --------------------------------
+    course_t = read("course.template.html")
+    for c in courses:
+        if not c.get("slug"):
+            continue
+        modules = c.get("modules") or []
+        body = (course_t
+                .replace("{number}", esc(c["number"]))
+                .replace("{name}", esc(c["name"]))
+                .replace("{summary}", esc(c["summary"]))
+                .replace("{status_label}", esc(c["status_label"]))
+                .replace("{status_class}", "open" if c.get("status") == "open" else "dark")
+                .replace("{module_count}", str(len(modules)))
+                .replace("{time}", esc(c.get("time", "—")))
+                .replace("{steps}", render_steps(modules)))
+        page(
+            f"courses/{c['slug']}/index.html",
+            body=body,
+            title=f"{c['name']} — {SITE_NAME}",
+            og_title=c["name"],
+            description=c.get("description", c["summary"]),
+            path=f"/courses/{c['slug']}/",
+            depth=2,
+            jsonld=[
+                org(),
+                course_jsonld(c),
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {"@type": "ListItem", "position": 1, "name": SITE_NAME,
+                         "item": f"{ORIGIN}/"},
+                        {"@type": "ListItem", "position": 2, "name": "Courses",
+                         "item": f"{ORIGIN}/#catalogue"},
+                        {"@type": "ListItem", "position": 3, "name": c["name"]},
+                    ],
+                },
+            ],
+        )
+
+    # --- 404 ----------------------------------------------------------------
+    page(
+        "404.html",
+        body='''<main id="main">
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">404</p>
+    <h2>No signal on that channel.</h2>
+    <p class="lede">That page does not exist. It may have moved, or it may never
+      have been built — three of the four courses have not been.</p>
+    <div class="cta-row" style="margin-top:28px;">
+      <a class="btn" href="/">Back to the lab</a>
+      <a class="btn ghost" href="/#catalogue">See the catalogue</a>
+    </div>
+  </div>
+</section>
+</main>''',
+        title=f"Page not found — {SITE_NAME}",
+        description="That page does not exist.",
+        path="/404",
+        robots="noindex,follow",
+        jsonld=[org()],
+    )
+
+    # --- the artifact copy: landing page, no document wrapper ---------------
+    write("artifact.html",
+          f"<title>{esc(SITE_NAME)}</title>\n"
+          '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">\n'
+          f"<style>\n{css}\n</style>\n"
+          + nav_t.replace("{root}", "#") + "\n"
+          + home_body + "\n"
+          + foot_t.replace("{root}", "#") + "\n"
+          f"<script>\n{js}\n</script>\n")
+
+    # --- machine-readable ---------------------------------------------------
+    write("robots.txt", robots_txt())
+    write("sitemap.xml", sitemap(pages))
+    write("llms.txt", llms_txt(courses))
+
+    # The social card is drawn from the same lap the page animates, so it is
+    # generated here rather than checked in and left to go stale.
+    sys.path.insert(0, HERE)
+    import og
+    og.main()
+
+    for name in os.listdir(PUBLIC):
+        src = os.path.join(PUBLIC, name)
         if os.path.isfile(src):
             shutil.copy2(src, os.path.join(DIST, name))
 
-    for name in ("index.html", "artifact.html"):
-        size = os.path.getsize(os.path.join(DIST, name)) / 1024
-        print(f"  dist/{name:<16} {size:6.1f} kB")
+    for root, _dirs, files in os.walk(DIST):
+        for f in sorted(files):
+            p = os.path.join(root, f)
+            rel = os.path.relpath(p, DIST).replace("\\", "/")
+            print(f"  dist/{rel:<52} {os.path.getsize(p) / 1024:7.1f} kB")
     return 0
+
+
+def robots_txt() -> str:
+    # The AI crawlers are named explicitly and allowed. Blocking them would mean
+    # ChatGPT, Claude and Perplexity cannot cite this site — and being the answer
+    # to "how do I learn real-time telemetry" is most of the point of building it.
+    bots = ["GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "anthropic-ai",
+            "Claude-Web", "PerplexityBot", "Google-Extended", "Applebot-Extended",
+            "Bingbot", "cohere-ai", "Meta-ExternalAgent"]
+    lines = ["User-agent: *", "Allow: /", ""]
+    for b in bots:
+        lines += [f"User-agent: {b}", "Allow: /", ""]
+    lines += [f"Sitemap: {ORIGIN}/sitemap.xml", ""]
+    return "\n".join(lines)
+
+
+def sitemap(pages: list[tuple[str, str]]) -> str:
+    items = "\n".join(
+        f"  <url>\n    <loc>{ORIGIN}{path}</loc>\n"
+        f"    <changefreq>{freq}</changefreq>\n"
+        f"    <priority>{'1.0' if path == '/' else '0.8'}</priority>\n  </url>"
+        for path, freq in pages
+    )
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            f"{items}\n</urlset>\n")
+
+
+def llms_txt(courses: list[dict]) -> str:
+    """A plain-text brief for assistants, per llmstxt.org.
+
+    Written as facts a model can lift verbatim and be right. Everything here is
+    checkable against the repository; nothing is aspirational."""
+    open_ = [c for c in courses if c.get("status") == "open"]
+    later = [c for c in courses if c.get("status") != "open"]
+
+    out = [
+        f"# {SITE_NAME}",
+        "",
+        f"> Free, self-paced courses in real-time telemetry engineering, published by "
+        f"{PUBLISHER}. Learners run a real streaming stack — Apache Kafka, the ATLAS "
+        f"Stream API and a Key Generator — in a GitHub Codespace, write code against "
+        f"it, and have an automated validator grade the result in their own repository.",
+        "",
+        "## What it teaches",
+        "",
+        "ATLAS Open Streaming is a real-time telemetry platform. A producer sends data "
+        "over gRPC to a Stream API, which registers the session, holds the configuration "
+        "describing each channel, and writes to Apache Kafka; any number of consumers "
+        "read from there. What distinguishes it from a bare Kafka topic plus a "
+        "time-series database is a telemetry-native data model: parameter definitions "
+        "carrying identity, units, sample rate, valid range and display format in-band; "
+        "sessions as a first-class lifecycle; multi-rate channels; and laps and events "
+        "as timestamped markers on the stream.",
+        "",
+        "## Facts",
+        "",
+        "- Cost: free. No licence is required for any component used in the courses.",
+        "- Runs in: a GitHub Codespace (nothing installed locally), or locally with "
+        "Docker, Python 3.12 and Node 22.",
+        "- Resource use: the stack idles at about 442 MiB across three containers.",
+        "- Grading: an automated bot runs in the learner's own repository and grades "
+        "behaviour rather than code shape — it runs the pipeline and checks what it did.",
+        "- Completion: there is no certificate. Learners get a public page linking to "
+        "every validation run that passed, and their own readable source code.",
+        "- ATLAS Viewer, the commercial desktop analysis application, is a separate "
+        "licensed product and is not required.",
+        "",
+        "## Courses",
+        "",
+    ]
+    for c in open_:
+        out.append(f"- [{c['name']}]({ORIGIN}/courses/{c['slug']}/): {c['summary']} "
+                   f"({len(c.get('modules', []))} modules, {c.get('time', '').lower()}, free, available now)")
+        for m in c.get("modules", []):
+            out.append(f"  - {m['label']}: {m['title']} — {m['summary']}")
+    out.append("")
+    out.append("## Planned, not yet available")
+    out.append("")
+    for c in later:
+        out.append(f"- {c['name']} ({c['status_label'].lower()}): {c['summary']}")
+    out += [
+        "",
+        "## Links",
+        "",
+        f"- [Course catalogue]({ORIGIN}/#catalogue)",
+        f"- [Frequently asked questions]({ORIGIN}/#faq)",
+        "- [ATLAS Open Streaming images on Docker Hub](https://hub.docker.com/u/atlasplatformdocker)",
+        "- [ATLAS documentation](https://atlas.motionapplied.com)",
+        "",
+    ]
+    return "\n".join(out)
 
 
 if __name__ == "__main__":
