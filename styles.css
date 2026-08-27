@@ -22,9 +22,14 @@
     --accent-d: #A8480F;
     --accent-l: #F9A463;
 
+    /* One superfamily, three roles. IBM Plex was drawn for technical products,
+       and the sans, condensed and mono cuts share a skeleton — so a channel
+       label, a heading and a readout value read as one instrument rather than
+       three fonts that happen to share a page. The condensed cut carries the
+       headlines: it is the voice of a technical manual, which is what this is. */
     --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
-    --display: Archivo, "Helvetica Neue", Arial, sans-serif;
-    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --display: "IBM Plex Sans Condensed", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
   }
 
   * { box-sizing: border-box; }
@@ -36,9 +41,9 @@
     margin: 0;
     background: var(--ground);
     color: var(--ink);
-    font-family: var(--serif);
-    font-size: 17px;
-    line-height: 1.62;
+    font-family: var(--sans);
+    font-size: 16.5px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -64,9 +69,9 @@
   h2 {
     font-family: var(--display);
     font-weight: 700;
-    font-size: clamp(28px, 3.4vw, 40px);
-    line-height: 1.06;
-    letter-spacing: -0.022em;
+    font-size: clamp(29px, 3.6vw, 43px);
+    line-height: 1.04;
+    letter-spacing: -0.008em;
     margin: 0 0 20px;
     text-wrap: balance;
   }
@@ -134,9 +139,9 @@
   h1 {
     font-family: var(--display);
     font-weight: 800;
-    font-size: clamp(40px, 6.2vw, 74px);
-    line-height: 0.98;
-    letter-spacing: -0.03em;
+    font-size: clamp(42px, 6.6vw, 82px);
+    line-height: 0.96;
+    letter-spacing: -0.012em;
     margin: 0 0 22px;
     max-width: 15ch;
     text-wrap: balance;
@@ -258,9 +263,9 @@
   .course-name {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 23px;
-    line-height: 1.14;
-    letter-spacing: -0.017em;
+    font-size: 24px;
+    line-height: 1.12;
+    letter-spacing: -0.005em;
     margin: 0 0 12px;
     color: var(--ink);
   }
@@ -357,7 +362,7 @@
     margin-bottom: 8px;
   }
   .modules .t {
-    font-family: var(--display);
+    font-family: var(--sans);
     font-weight: 600;
     font-size: 15.5px;
     letter-spacing: -0.01em;
@@ -445,6 +450,12 @@
   }
   .evidence .h { color: var(--ink); }
   .evidence .ok { color: var(--accent); }
+  .evidence .m {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 10.5px;
+  }
 
   footer {
     border-top: 1px solid var(--line);
@@ -535,7 +546,7 @@
   list-style: none;
   padding: 20px 40px 20px 0;
   position: relative;
-  font-family: var(--display);
+  font-family: var(--sans);
   font-weight: 600;
   font-size: 17.5px;
   letter-spacing: -0.01em;
@@ -626,8 +637,8 @@
 .steps h3 {
   font-family: var(--display);
   font-weight: 700;
-  font-size: 21px;
-  letter-spacing: -0.015em;
+  font-size: 22px;
+  letter-spacing: -0.005em;
   margin: 0 0 8px;
 }
 .steps p { margin: 0 0 8px; color: var(--ink-2); }

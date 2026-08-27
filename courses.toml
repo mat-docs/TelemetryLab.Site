@@ -19,7 +19,7 @@
 # slug:    gives the course its own page at /courses/<slug>/. Omit it and the
 #          course appears in the catalogue but gets no page of its own, which
 #          is what you want for one that does not exist yet.
-# time:    shown on the course page.
+# time:    shown on the course page. Omit it unless it has been measured.
 # description: the meta description and the JSON-LD description for that page.
 
 [[courses]]
@@ -29,10 +29,9 @@ name         = "Introduction to Open Streaming Foundations"
 status       = "open"
 status_label = "Open now"
 summary      = "The pipeline, and the four ideas a bare Kafka topic has no concept of."
-meta         = "4 modules · about an evening · free"
+meta         = "4 modules · free · no licence"
 channel      = "Speed"
 slug         = "introduction-to-open-streaming-foundations"
-time         = "About an evening"
 description  = "A free, four-module course in real-time telemetry. Run a broker, a streaming API and a synthetic race car, write code against them, and have a bot grade your work. No licence, nothing to install."
 
   [[courses.modules]]
@@ -63,25 +62,22 @@ description  = "A free, four-module course in real-time telemetry. Run a broker,
 id           = "course-02"
 number       = "Course 02"
 name         = "Producers and bridges"
-status       = "building"
-status_label = "In development"
-summary      = "Get an arbitrary source — a CSV, a public dataset, your own rig — into the stack with a clean session lifecycle."
-meta         = "Not available yet"
+status       = "planned"
+status_label = "Not built yet"
+summary      = "Getting an arbitrary source — a CSV, a public dataset, your own rig — into the stack with a clean session lifecycle."
 
 [[courses]]
 id           = "course-03"
 number       = "Course 03"
 name         = "Consumers that survive production"
 status       = "planned"
-status_label = "Planned"
+status_label = "Not built yet"
 summary      = "Late joiners, malformed packets, interleaved sessions, and producers that die without closing."
-meta         = "Not available yet"
 
 [[courses]]
 id           = "course-04"
 number       = "Course 04"
 name         = "Events and derived parameters"
 status       = "planned"
-status_label = "Planned"
-summary      = "Find something real in the data — a lockup, an over-temperature — and mark it. Compute derived channels as the stream runs."
-meta         = "Not available yet"
+status_label = "Not built yet"
+summary      = "Finding something real in the data — a lockup, an over-temperature — and marking it. Computing derived channels as the stream runs."

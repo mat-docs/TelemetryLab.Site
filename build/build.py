@@ -65,7 +65,7 @@ DOCUMENT = """<!doctype html>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230A0D0F'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23ED6D20' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
 
 <style>
@@ -122,7 +122,7 @@ def render_catalogue(courses: list[dict]) -> str:
             <span class="status {'open' if open_ else 'dark'}">{esc(c['status_label'])}</span>
             <h3 class="course-name">{name}</h3>
             <p class="course-summary">{esc(c['summary'])}</p>
-            <p class="course-meta">{esc(c['meta'])}</p>
+            {f'<p class="course-meta">{esc(c["meta"])}</p>' if c.get("meta") else ""}
           </div>
           {lane}
         </div>""")
@@ -188,14 +188,13 @@ def course_jsonld(c: dict) -> dict:
         "offers": {
             "@type": "Offer",
             "price": "0",
-            "priceCurrency": "GBP",
+            "priceCurrency": "USD",
             "availability": "https://schema.org/InStock",
             "category": "Free",
         },
         "hasCourseInstance": {
             "@type": "CourseInstance",
             "courseMode": "online",
-            "courseWorkload": "PT4H",
         },
     }
     return d
@@ -346,7 +345,6 @@ def main() -> int:
                 .replace("{status_label}", esc(c["status_label"]))
                 .replace("{status_class}", "open" if c.get("status") == "open" else "dark")
                 .replace("{module_count}", str(len(modules)))
-                .replace("{time}", esc(c.get("time", "—")))
                 .replace("{steps}", render_steps(modules)))
         page(
             f"courses/{c['slug']}/index.html",
@@ -401,7 +399,7 @@ def main() -> int:
           f"<title>{esc(SITE_NAME)}</title>\n"
           '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
           '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">\n'
+          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">\n'
           f"<style>\n{css}\n</style>\n"
           + nav_t.replace("{root}", "#") + "\n"
           + home_body + "\n"
@@ -493,8 +491,10 @@ def llms_txt(courses: list[dict]) -> str:
         "- Resource use: the stack idles at about 442 MiB across three containers.",
         "- Grading: an automated bot runs in the learner's own repository and grades "
         "behaviour rather than code shape — it runs the pipeline and checks what it did.",
-        "- Completion: there is no certificate. Learners get a public page linking to "
-        "every validation run that passed, and their own readable source code.",
+        "- Completion: there is no certificate. What a learner ends up with is their "
+        "own repository, the code they wrote, and a permanent GitHub Actions URL for "
+        "every validation run that passed. A per-engineer summary page is intended but "
+        "not built.",
         "- ATLAS Viewer, the commercial desktop analysis application, is a separate "
         "licensed product and is not required.",
         "",
@@ -503,7 +503,7 @@ def llms_txt(courses: list[dict]) -> str:
     ]
     for c in open_:
         out.append(f"- [{c['name']}]({ORIGIN}/courses/{c['slug']}/): {c['summary']} "
-                   f"({len(c.get('modules', []))} modules, {c.get('time', '').lower()}, free, available now)")
+                   f"({len(c.get('modules', []))} modules, free, available now; duration not yet measured)")
         for m in c.get("modules", []):
             out.append(f"  - {m['label']}: {m['title']} — {m['summary']}")
     out.append("")

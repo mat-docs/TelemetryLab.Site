@@ -10,9 +10,9 @@
       </div>
       <h1>Learn real-time telemetry on a <em>working pipeline</em>.</h1>
       <p class="standfirst">
-        Course one is four modules. You run a broker, a streaming API and a
-        synthetic race car, write code against them, and a bot checks your work.
-        Runs in a browser tab. Free, and nothing here needs a licence.
+        Course 01 is four modules. You run a broker, a streaming API and a
+        simulated race car, write code against them, and a bot marks it by
+        running it. In a browser tab, free, and with no licence to buy.
       </p>
       <div class="cta-row">
         <a class="btn" href="#course-01">Start course 01</a>
@@ -29,18 +29,42 @@
   </div>
 </div>
 
+<section class="band" id="what">
+  <div class="wrap narrow">
+    <p class="label">What this is</p>
+    <h2>Coding exercises that teach you how telemetry moves.</h2>
+    <p class="lede">
+      You take a copy of a repository. You open it in a browser IDE, and a
+      message broker, a streaming API and a simulated race car start up inside
+      it. You change the code. A bot runs your version against that pipeline and
+      tells you what actually happened.
+    </p>
+    <p>
+      That is the whole idea. Not a video course, not slides, not a certificate —
+      four small tasks against a real stack, each one marked by running it. It is
+      free, it needs no licence, and there is nothing to install.
+    </p>
+    <p>
+      It exists because engineers who need to move telemetry usually end up
+      assembling a broker and a time-series database and rebuilding sessions,
+      units and sample rates by hand, every time. Motion Applied build a platform
+      that has those already, and this is how you learn it.
+    </p>
+  </div>
+</section>
+
 <section class="band">
   <div class="wrap narrow">
     <p class="label">The lap above</p>
     <h2>Where that lap came from</h2>
     <p class="lede">
-      It is output from the lab's simulator — the same code you run in Module 1.
+      It is output from the lab's simulator — the same code you run in Module 01.
       The six numbers under it are channels off that lap, each at its own rate,
       in the units its definition declares.
     </p>
     <p>
       The page does not have those units written into it. It reads them out of the
-      channel definitions that came with the data, which is what Module 2 is about.
+      channel definitions that came with the data, which is what Module 02 is about.
     </p>
   </div>
 </section>
@@ -49,11 +73,10 @@
   <div class="wrap">
     <div class="narrow">
       <p class="label">Catalogue</p>
-      <h2>Four courses planned. One you can take today.</h2>
+      <h2>One course. The rest are not built yet.</h2>
       <p class="lede">
-        Each course is a set of modules with a machine-checkable outcome. You work
-        on a branch, open a pull request in your own repository, and a bot runs the
-        pipeline against what you wrote and tells you what it found.
+        Course 01 is finished and you can take it now. The three below it are what
+        we intend to build next, in that order. Nobody is working on them today.
       </p>
     </div>
 
@@ -62,8 +85,8 @@ __CATALOGUE__
     </div>
 
     <p class="cat-foot">
-      A flat lane means we have not built that course yet. We are not putting
-      dates on them.
+      A flat lane is an unconnected channel: there is nothing there yet. We are
+      not putting dates on them, because we would only miss them.
     </p>
   </div>
 </section>
@@ -129,12 +152,19 @@ __CATALOGUE__
     <p class="label">Finishing a course</p>
     <h2>There is no certificate.</h2>
     <p>
-      You get a page listing what you built and every validation run that passed.
-      Each run links to the Actions log it came from, with the output. Anyone can
-      open them.
+      What you end up with is your own repository: the code you wrote, and a
+      permanent link to every validation run that passed, with the output the bot
+      saw. Those are ordinary GitHub Actions URLs. Anyone can open them, including
+      someone deciding whether to interview you.
+    </p>
+    <p>
+      We intend to collect that into a page per engineer. <strong>It is not built
+      yet</strong> — the sketch below is what we are aiming at, not something you
+      can visit.
     </p>
 
     <div class="evidence">
+      <span class="m">not built yet — a sketch</span><br>
       <span class="h">telemetrylab.atlas.motionapplied.com/engineers/yourhandle</span><br><br>
       Course 01 &nbsp;Open Streaming Foundations &nbsp;<span class="ok">complete</span><br>
       <br>
@@ -148,8 +178,8 @@ __CATALOGUE__
 
     <p style="margin-top:26px;">
       We are not an accreditation body, so a certificate from us would not mean
-      much. The code you wrote is public and readable, which is more use to
-      someone deciding whether to interview you.
+      much. Readable code and a link to the run that proved it works is worth
+      more, and it exists whether or not we ever build the page.
     </p>
   </div>
 </section>
@@ -161,53 +191,88 @@ __CATALOGUE__
 
     <div class="faq">
       <details open>
+        <summary>What is the ATLAS Telemetry Lab?</summary>
+        <p class="a">
+          Free coding exercises that teach how a real-time telemetry pipeline
+          works, by making you run one and change it. You copy a repository, open
+          it in a browser IDE, and a broker, a streaming API and a simulated car
+          start up. You edit code; a bot runs it against the pipeline and reports
+          what happened.
+        </p>
+      </details>
+
+      <details>
         <summary>What is ATLAS Open Streaming?</summary>
         <p class="a">
-          A real-time telemetry platform from Motion Applied. A producer sends
-          data over gRPC to a Stream API, which registers the session, holds the
-          configuration describing each channel, and writes to Kafka. Any number
-          of consumers read from there. The images are published publicly on
-          Docker Hub and need no licence.
+          The platform the lab runs on, from Motion Applied. A
+          producer sends data over gRPC to a Stream API, which registers the
+          session, holds the configuration describing each channel, and writes to
+          Apache Kafka. Any number of consumers read from there.
         </p>
       </details>
 
       <details>
         <summary>Do I need an ATLAS licence?</summary>
         <p class="a">
-          No. Every component the courses use — the Stream API, the Key
-          Generator, Kafka — is published publicly and free to run. ATLAS Viewer,
-          the commercial desktop analysis application, is a separate licensed
-          product, and nothing in any course requires it.
+          Not for course 01. The three images it runs — Apache Kafka, the ATLAS
+          Stream API and the Key Generator — are public on Docker Hub and pull
+          with no account or licence key; that is how the automated validation
+          runs every time. ATLAS Viewer, the commercial desktop application, is
+          not used. If a later course needs a licensed component, its own page
+          will say so.
         </p>
       </details>
 
       <details>
         <summary>What does it cost?</summary>
         <p class="a">
-          Nothing. GitHub Actions is free on public repositories, and Codespaces
-          draws on your own allowance — 120 core-hours a month on a free account,
-          180 on Pro, and students get Pro through the GitHub Education pack.
-          Course one uses well under one hour of that.
+          We charge nothing. The compute is GitHub's and comes out of your own
+          allowance: Actions is unlimited on public repositories and 2,000 minutes
+          a month on private ones, and Codespaces gives personal accounts 120
+          core-hours a month free, or 180 on Pro. On the 2-core machine this uses,
+          120 core-hours is 60 hours of run time.
+        </p>
+      </details>
+
+      <details>
+        <summary>How long does course 01 take?</summary>
+        <p class="a">
+          We do not know yet, and any figure we gave you would be invented. Nobody
+          outside the team has run it start to finish. What is measured: four
+          modules, a Codespace that takes about three and a half minutes to become
+          usable, and a validation run of roughly two minutes each time you
+          submit. We will publish a real number when we have one.
         </p>
       </details>
 
       <details>
         <summary>What do I need installed?</summary>
         <p class="a">
-          Nothing, if you use a Codespace — it builds with Docker, Python 3.12
-          and Node 22 already in it, and the container images pre-pulled. To run
-          on your own machine instead you need those three, and the same
-          <code>docker compose up</code> works.
+          Nothing, if you use a Codespace — it arrives with Docker, Python 3.12
+          and Node 22 in it and the container images already pulled. To work on
+          your own machine instead you need those three, and the same
+          <code>docker compose up</code> brings the stack up.
         </p>
       </details>
 
       <details>
         <summary>How is my work marked?</summary>
         <p class="a">
-          A bot in your own repository runs the whole pipeline against what you
-          wrote and comments on your pull request. It grades behaviour, not
-          shape: it never checks for a particular line of code, it runs the thing
-          and checks what it did. Solve a module differently and it still passes.
+          A GitHub Actions workflow in your own repository runs the whole pipeline
+          against what you wrote and comments on your pull request. It grades
+          behaviour, not shape: it never looks for a particular line of code, it
+          runs the thing and checks what it did. Solve a module a different way
+          and it still passes.
+        </p>
+      </details>
+
+      <details>
+        <summary>Does my repository have to be public?</summary>
+        <p class="a">
+          No. It is your repository and the choice is yours. Public means the
+          Actions minutes are unlimited and your work is linkable, which is the
+          point of the completion page. Private works too, and draws on your 2,000
+          free minutes a month.
         </p>
       </details>
 
@@ -215,29 +280,31 @@ __CATALOGUE__
         <summary>Do I need to know anything about motorsport?</summary>
         <p class="a">
           No. The simulated car is a convenient source of realistic multi-rate
-          data with laps and events in it. The concepts — sessions, parameter
-          definitions, contiguous timestamps, markers — are the same whether the
-          data comes from a race car, a UAV, or a test rig.
-        </p>
-      </details>
-
-      <details>
-        <summary>Is this only useful for motorsport?</summary>
-        <p class="a">
-          No. The problem it addresses — a stream where channels carry their own
-          identity, units and rate, and sessions have a real lifecycle — turns up
-          in robotics, aerospace test, automotive test and any rig logging
-          hundreds of channels at mixed rates.
+          data with laps and events in it. Motion Applied document ATLAS as being
+          used in motorsport, aerospace, research and robotics, and the ideas here
+          — sessions, parameter definitions, contiguous timestamps, markers — do
+          not depend on the domain.
         </p>
       </details>
 
       <details>
         <summary>Can I use a language other than Python or JavaScript?</summary>
         <p class="a">
-          Yes, from Module 4 onward. The producer and reference consumer ship in
-          Python and JavaScript, but the protocol is protobuf over Kafka and the
-          definitions are public. Module 4 grades what your consumer reported
-          against what the producer recorded sending, in any language.
+          Yes, from Module 04. The producer and the reference consumer are Python
+          and JavaScript, but the wire format is protobuf over Kafka and the
+          definitions ship in the repository. Module 04 compares what your
+          consumer reports against what the producer recorded sending, whatever
+          you wrote it in.
+        </p>
+      </details>
+
+      <details>
+        <summary>Who made this, and why?</summary>
+        <p class="a">
+          Motion Applied, who build ATLAS. The honest reason: engineers who learn
+          telemetry on a platform tend to reach for it again later. The stack the
+          courses use is free and public either way, and everything you write
+          stays yours.
         </p>
       </details>
     </div>
