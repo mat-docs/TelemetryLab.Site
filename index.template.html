@@ -270,6 +270,12 @@
     margin: 0 0 12px;
     color: var(--ink);
   }
+  .course-summary {
+    margin: 0 0 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
   .course-meta {
     font-family: var(--mono);
     font-size: 11.5px;
@@ -464,11 +470,11 @@
         <span class="mark">ATLAS Telemetry Lab</span>
         <span class="sub">by Motion Applied</span>
       </div>
-      <h1>Learn to move telemetry. By <em>moving telemetry</em>.</h1>
+      <h1>Learn real-time telemetry on a <em>working pipeline</em>.</h1>
       <p class="standfirst">
-        A growing set of courses in real-time telemetry engineering. You write the
-        code, a bot runs it against a real pipeline, and your work is the
-        certificate. Course one is open now.
+        Course one is four modules. You run a broker, a streaming API and a
+        synthetic race car, write code against them, and a bot checks your work.
+        Runs in a browser tab. Free, and nothing here needs a licence.
       </p>
       <div class="cta-row">
         <a class="btn" href="#course-01">Start course 01</a>
@@ -487,16 +493,16 @@
 
 <section class="band">
   <div class="wrap narrow">
-    <p class="label">What you are looking at</p>
-    <h2>That lap is real data.</h2>
+    <p class="label">The lap above</p>
+    <h2>Where that lap came from</h2>
     <p class="lede">
-      It came out of the lab's own simulator — the same code you run in Module 1 —
-      and every number in the strip below it is a channel off that lap, at its own
-      rate, in its own units.
+      It is output from the lab's simulator — the same code you run in Module 1.
+      The six numbers under it are channels off that lap, each at its own rate,
+      in the units its definition declares.
     </p>
     <p>
-      Nothing on this page has those values hardcoded. That is the entire point,
-      and it is what the first course spends an evening teaching you to rely on.
+      The page does not have those units written into it. It reads them out of the
+      channel definitions that came with the data, which is what Module 2 is about.
     </p>
   </div>
 </section>
@@ -505,100 +511,21 @@
   <div class="wrap">
     <div class="narrow">
       <p class="label">Catalogue</p>
-      <h2>One course open. Three more on the bench.</h2>
+      <h2>Four courses planned. One you can take today.</h2>
       <p class="lede">
-        Each course is a set of modules with machine-checkable outcomes. You work
+        Each course is a set of modules with a machine-checkable outcome. You work
         on a branch, open a pull request in your own repository, and a bot runs the
-        whole pipeline against your work and tells you what it found.
+        pipeline against what you wrote and tells you what it found.
       </p>
     </div>
 
     <div class="catalogue">
-
-      <article class="course" id="course-01">
-        <div class="course-row">
-          <div class="course-id">
-            <span class="course-no">Course 01</span>
-            <span class="status open">Open now</span>
-            <h3 class="course-name">Introduction to Open Streaming Foundations</h3>
-            <p class="course-meta">4 modules · about an evening · free</p>
-          </div>
-          <div class="lane" data-channel="Speed"></div>
-        </div>
-
-        <ul class="modules">
-          <li>
-            <span class="n">Module 01</span>
-            <span class="t">Make it yours</span>
-            <p class="d">Get a real pipeline running, and find out what a session actually is.</p>
-            <p class="g">graded — the session carries your handle, and the data reaches Kafka</p>
-          </li>
-          <li>
-            <span class="n">Module 02</span>
-            <span class="t">Add a channel</span>
-            <p class="d">Declare a parameter and emit it. Watch a consumer you did not modify learn its units.</p>
-            <p class="g">graded — a channel the lab does not ship appears, with units</p>
-          </li>
-          <li>
-            <span class="n">Module 03</span>
-            <span class="t">Fix the broken producer</span>
-            <p class="d">A variant produces jumpy traces. Nothing errors. Every value is correct. Find out why.</p>
-            <p class="g">graded — zero discontinuities across the session</p>
-          </li>
-          <li>
-            <span class="n">Module 04</span>
-            <span class="t">Write your first consumer</span>
-            <p class="d">Decode the stream yourself, in any language. The validator invents a new channel every run, so nothing can be hardcoded.</p>
-            <p class="g">graded against what the producer recorded sending</p>
-          </li>
-        </ul>
-      </article>
-
-      <article class="course dark">
-        <div class="course-row">
-          <div class="course-id">
-            <span class="course-no">Course 02</span>
-            <span class="status dark">In development</span>
-            <h3 class="course-name">Producers and bridges</h3>
-            <p class="course-meta">Not yet available</p>
-          </div>
-          <div class="lane" data-nosignal="1"></div>
-        </div>
-      </article>
-
-      <article class="course dark">
-        <div class="course-row">
-          <div class="course-id">
-            <span class="course-no">Course 03</span>
-            <span class="status dark">Planned</span>
-            <h3 class="course-name">Consumers that survive production</h3>
-            <p class="course-meta">Not yet available</p>
-          </div>
-          <div class="lane" data-nosignal="1"></div>
-        </div>
-      </article>
-
-      <article class="course dark">
-        <div class="course-row">
-          <div class="course-id">
-            <span class="course-no">Course 04</span>
-            <span class="status dark">Planned</span>
-            <h3 class="course-name">Events and derived parameters</h3>
-            <p class="course-meta">Not yet available</p>
-          </div>
-          <div class="lane" data-nosignal="1"></div>
-        </div>
-      </article>
-
+__CATALOGUE__
     </div>
 
     <p class="cat-foot">
-      Course 02 takes an arbitrary source — a CSV, a public dataset, your own rig —
-      into the stack with a clean session lifecycle. Course 03 is late joiners,
-      malformed packets, interleaved sessions and producers that die without
-      closing. Course 04 is finding something real in the data and marking it.<br>
-      A flat lane means the course does not exist yet. We would rather show you an
-      empty channel than a launch date.
+      A flat lane means we have not built that course yet. We are not putting
+      dates on them.
     </p>
   </div>
 </section>
@@ -661,16 +588,12 @@
 
 <section class="band">
   <div class="wrap narrow">
-    <p class="label">What you finish with</p>
-    <h2>Evidence, not a badge.</h2>
+    <p class="label">Finishing a course</p>
+    <h2>There is no certificate.</h2>
     <p>
-      Finishing a course gets you a public page. It does not say you are certified,
-      because we are not an accreditation body and saying so would be worth nothing.
-    </p>
-    <p>
-      It says <strong>here is what this person built, and here is every validation
-      run that passed</strong> — each one a URL anyone can click, including someone
-      deciding whether to hire you.
+      You get a page listing what you built and every validation run that passed.
+      Each run links to the Actions log it came from, with the output. Anyone can
+      open them.
     </p>
 
     <div class="evidence">
@@ -686,8 +609,9 @@
     </div>
 
     <p style="margin-top:26px;">
-      The code you wrote is public and readable. Nobody has to take our word for
-      anything, which is the only kind of credential worth having.
+      We are not an accreditation body, so a certificate from us would not mean
+      much. The code you wrote is public and readable, which is more use to
+      someone deciding whether to interview you.
     </p>
   </div>
 </section>
@@ -695,13 +619,13 @@
 <section class="band" id="start">
   <div class="wrap narrow">
     <p class="label">Start</p>
-    <h2>Nothing to install. Nothing to license.</h2>
+    <h2>What you need</h2>
     <p>
-      Take your own copy of the lab from the template, then open it in a Codespace.
-      Kafka, the ATLAS Stream API and a Key Generator are one
-      <code style="font-family:var(--mono);color:var(--ink-2)">docker compose up</code>
-      away, and the images are already pulled. The whole stack idles at 442 MiB and
-      fits comfortably inside GitHub's free tier.
+      Your own copy of the lab from the template, and a Codespace. Kafka, the ATLAS
+      Stream API and a Key Generator come up with one
+      <code style="font-family:var(--mono);color:var(--ink-2)">docker compose up</code>,
+      and the images are already pulled. The stack idles at 442 MiB, well inside
+      GitHub's free tier for the length of the course.
     </p>
     <div class="cta-row" style="margin-top:28px;">
       <a class="btn" href="#start">Get your copy</a>
@@ -714,7 +638,7 @@
   <div class="wrap narrow">
     <p>
       Built on <a href="https://hub.docker.com/u/atlasplatformdocker">ATLAS Open Streaming</a> —
-      free, licence-free, and published publicly by Motion Applied. ATLAS Viewer,
+      published publicly by Motion Applied, with no licence to buy. ATLAS Viewer,
       the commercial analysis application, is a separate licensed product and is
       not needed for any of this.
     </p>

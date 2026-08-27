@@ -1,0 +1,78 @@
+# The course catalogue.
+#
+# The catalogue section of the site is generated from this file, so adding a
+# course or opening one means editing here and rebuilding — not touching HTML.
+#
+# status:
+#   open    the course exists and can be taken today. Drawn in orange, with a
+#           real channel off the lap in its lane.
+#   closed  anything else. Drawn grey, with a flat NO SIGNAL lane.
+#
+#   There are deliberately only two. The words in status_label carry the
+#   difference between "in development" and "planned"; the colours do not try
+#   to, because teal against grey measures dE 13.0 to normal vision, which is
+#   below the legibility floor.
+#
+# channel: a channel name present in public/lap.json, drawn in the lane.
+#          Only used when status = "open".
+
+[[courses]]
+id           = "course-01"
+number       = "Course 01"
+name         = "Introduction to Open Streaming Foundations"
+status       = "open"
+status_label = "Open now"
+summary      = "The pipeline, and the four ideas a bare Kafka topic has no concept of."
+meta         = "4 modules · about an evening · free"
+channel      = "Speed"
+
+  [[courses.modules]]
+  label   = "Module 01"
+  title   = "Make it yours"
+  summary = "Get a real pipeline running, and find out what a session actually is."
+  graded  = "graded — the session carries your handle, and the data reaches Kafka"
+
+  [[courses.modules]]
+  label   = "Module 02"
+  title   = "Add a channel"
+  summary = "Declare a parameter and emit it. A consumer you did not touch picks up its units."
+  graded  = "graded — a channel the lab does not ship appears, with units"
+
+  [[courses.modules]]
+  label   = "Module 03"
+  title   = "Fix the broken producer"
+  summary = "A variant produces jumpy traces. Nothing errors. Every value is correct. Find out why."
+  graded  = "graded — zero discontinuities across the session"
+
+  [[courses.modules]]
+  label   = "Module 04"
+  title   = "Write your first consumer"
+  summary = "Decode the stream yourself, in any language. The validator invents a new channel each run, so you cannot hardcode your way through."
+  graded  = "graded against what the producer recorded sending"
+
+[[courses]]
+id           = "course-02"
+number       = "Course 02"
+name         = "Producers and bridges"
+status       = "building"
+status_label = "In development"
+summary      = "Get an arbitrary source — a CSV, a public dataset, your own rig — into the stack with a clean session lifecycle."
+meta         = "Not available yet"
+
+[[courses]]
+id           = "course-03"
+number       = "Course 03"
+name         = "Consumers that survive production"
+status       = "planned"
+status_label = "Planned"
+summary      = "Late joiners, malformed packets, interleaved sessions, and producers that die without closing."
+meta         = "Not available yet"
+
+[[courses]]
+id           = "course-04"
+number       = "Course 04"
+name         = "Events and derived parameters"
+status       = "planned"
+status_label = "Planned"
+summary      = "Find something real in the data — a lockup, an over-temperature — and mark it. Compute derived channels as the stream runs."
+meta         = "Not available yet"

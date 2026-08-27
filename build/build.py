@@ -15,13 +15,16 @@ a strict CSP blocks fetches.
 
 from __future__ import annotations
 
+import html
 import os
 import shutil
 import sys
+import tomllib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(HERE, "..")
 TEMPLATE = os.path.join(SITE, "index.template.html")
+COURSES = os.path.join(SITE, "courses.toml")
 LAP = os.path.join(SITE, "public", "lap.json")
 DIST = os.path.join(SITE, "dist")
 
@@ -44,6 +47,55 @@ DOCUMENT = """<!doctype html>
 """
 
 
+def esc(s: str) -> str:
+    return html.escape(str(s), quote=True)
+
+
+def render_catalogue(courses: list[dict]) -> str:
+    """Render the course list from courses.toml.
+
+    Two states only — a course is open or it is not. An open course gets a real
+    channel in its lane; anything else gets a flat one, which is what an
+    unconnected channel looks like on an instrument and cannot be mistaken for
+    a launch date.
+    """
+    out = []
+    for c in courses:
+        open_ = c.get("status") == "open"
+        cls = "course" if open_ else "course dark"
+        lane = (
+            f'<div class="lane" data-channel="{esc(c.get("channel", ""))}"></div>'
+            if open_ else
+            '<div class="lane" data-nosignal="1"></div>'
+        )
+        out.append(f"""      <article class="{cls}" id="{esc(c['id'])}">
+        <div class="course-row">
+          <div class="course-id">
+            <span class="course-no">{esc(c['number'])}</span>
+            <span class="status {'open' if open_ else 'dark'}">{esc(c['status_label'])}</span>
+            <h3 class="course-name">{esc(c['name'])}</h3>
+            <p class="course-summary">{esc(c['summary'])}</p>
+            <p class="course-meta">{esc(c['meta'])}</p>
+          </div>
+          {lane}
+        </div>""")
+
+        modules = c.get("modules") or []
+        if modules:
+            items = "\n".join(
+                f"""          <li>
+            <span class="n">{esc(m['label'])}</span>
+            <span class="t">{esc(m['title'])}</span>
+            <p class="d">{esc(m['summary'])}</p>
+            <p class="g">{esc(m['graded'])}</p>
+          </li>""" for m in modules
+            )
+            out.append(f'        <ul class="modules">\n{items}\n        </ul>')
+
+        out.append("      </article>")
+    return "\n".join(out)
+
+
 def main() -> int:
     if not os.path.exists(LAP):
         print("lap.json is missing. Run site/build/export_lap.py first.", file=sys.stderr)
@@ -54,7 +106,14 @@ def main() -> int:
     with open(LAP, encoding="utf-8") as f:
         lap = f.read().strip()
 
+    with open(COURSES, "rb") as f:
+        courses = tomllib.load(f)["courses"]
+
     content = template.replace("__LAP_DATA__", lap)
+    if "__CATALOGUE__" not in content:
+        print("index.template.html has no __CATALOGUE__ placeholder.", file=sys.stderr)
+        return 1
+    content = content.replace("__CATALOGUE__", render_catalogue(courses))
 
     os.makedirs(DIST, exist_ok=True)
 

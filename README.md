@@ -11,13 +11,46 @@ page has no business being there — and keeping it here means we can redeploy t
 site as often as we like without touching a template that people are mid-way
 through.
 
+## Adding or opening a course
+
+Edit [`courses.toml`](courses.toml) and rebuild. The catalogue section is
+generated from it — there is no course markup in the template.
+
+```toml
+[[courses]]
+id           = "course-02"
+number       = "Course 02"
+name         = "Producers and bridges"
+status       = "open"            # "open", or anything else for not-yet
+status_label = "Open now"
+summary      = "..."
+meta         = "3 modules · a weekend · free"
+channel      = "Throttle"        # a channel in public/lap.json, drawn in the lane
+
+  [[courses.modules]]
+  label   = "Module 01"
+  title   = "..."
+  summary = "..."
+  graded  = "..."
+```
+
+`status = "open"` draws the course in orange with a real telemetry channel in
+its lane. Anything else draws it grey with a flat `NO SIGNAL` lane — which is
+what an unconnected channel looks like on an instrument, and cannot be mistaken
+for a launch date.
+
+There are only two states on purpose. The words in `status_label` carry the
+difference between "in development" and "planned"; the colours do not try to,
+because teal against grey measures ΔE 13.0 to normal vision — below the
+legibility floor.
+
 ## Build
 
 ```bash
 python build/build.py
 ```
 
-No dependencies. Two outputs:
+No dependencies — `tomllib` is in the standard library. Two outputs:
 
 | Output | For |
 |---|---|
