@@ -186,18 +186,6 @@ def render_catalogue(courses: list[dict], only_open: bool = False) -> str:
     return "\n".join(out)
 
 
-def roadmap_note(courses: list[dict]) -> str:
-    """One honest line about what is not built, from the same config."""
-    later = [c for c in courses if c.get("status") != "open"]
-    if not later:
-        return ""
-    names = ", ".join(c["name"] for c in later[:-1])
-    names = f"{names} and {later[-1]['name']}" if names else later[-1]["name"]
-    return (f'<p class="roadmap"><b>{esc(len(later))} more courses are intended</b> — '
-            f'{esc(names)}. None of them are built, and we are not putting dates '
-            f'on them.</p>')
-
-
 def render_steps(modules: list[dict]) -> str:
     return "\n".join(
         f"""      <li>
@@ -354,7 +342,7 @@ def main() -> int:
     # --- landing page -------------------------------------------------------
     home_body = read("index.template.html").replace(
         "__CATALOGUE__", render_catalogue(courses, only_open=True)
-    ).replace("__ROADMAP__", roadmap_note(courses))
+    )
     home_graph = [
         org(),
         {

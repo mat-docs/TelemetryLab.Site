@@ -807,16 +807,6 @@ footer {
   .loop { grid-template-columns: 1fr; }
 }
 
-/* One course, so the lane is the course's own trace and nothing competes with
-   it. The unbuilt three are a line of text further down, not empty boxes. */
-.roadmap {
-  margin-top: 22px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 14.5px;
-}
-.roadmap b { color: var(--ink-2); font-weight: 600; }
 
 /* The course title is a link but should read as a title, not as raw hypertext. */
 .course-name a {
