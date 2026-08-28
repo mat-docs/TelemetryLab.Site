@@ -85,11 +85,11 @@
 
   .hero {
     position: relative;
-    padding: 56px 0 72px;
+    padding: 40px 0 64px;
     border-bottom: 1px solid var(--line);
   }
 
-  .hero-copy { max-width: 44ch; }
+  .hero-copy { max-width: none; }
 
   /* The two panels: the data on the left, the thing that marks your work on
      the right. Stacks below 900px. */
@@ -97,7 +97,7 @@
     display: grid;
     grid-template-columns: 1.05fr 1fr;
     gap: 18px;
-    margin-top: 46px;
+    margin-top: 32px;
     align-items: stretch;
   }
   @media (max-width: 900px) {
@@ -228,7 +228,7 @@
     font-size: 20px;
     line-height: 1.5;
     color: var(--ink-2);
-    max-width: 48ch;
+    max-width: 54ch;
     margin: 0 0 32px;
   }
 
