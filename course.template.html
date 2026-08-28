@@ -7,13 +7,33 @@
       <a href="../../#catalogue">Courses</a> &nbsp;/&nbsp;
       {number}
     </p>
-    <span class="status {status_class}">{status_label}</span>
-    <h1>{name}</h1>
-    <p class="standfirst">{summary}</p>
+    <div class="hero-panels">
+      <div class="hero-copy">
+        <span class="status {status_class}">{status_label}</span>
+        <h1>{name}</h1>
+        <p class="standfirst">
+          Four modules against a running pipeline. You change the code, a bot runs
+          your version on a clean machine, and it tells you what actually happened.
+        </p>
 
-    <div class="cta-row">
-      <a class="btn" href="../../#start">Get your copy</a>
-      <a class="btn ghost" href="../../#faq">Questions</a>
+        <div class="cta-row">
+          <a class="btn" href="../../#start">Get your copy</a>
+          <a class="btn ghost" href="#faq">Questions</a>
+        </div>
+      </div>
+
+      <!-- The course's own data. Same lap the learner streams in Module 01. -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="dot" aria-hidden="true"></span>
+          Sandbourne Park
+          <span class="right">3,806 m &middot; 60 Hz</span>
+        </div>
+        <div class="trace-box">
+          <canvas id="trackmap" aria-hidden="true"></canvas>
+        </div>
+        <div class="readout-inner" id="readout"></div>
+      </div>
     </div>
 
     <dl class="course-facts">
@@ -29,11 +49,11 @@
   <div class="wrap narrow">
     <p class="label">What it covers</p>
     <h2>Four things a bare Kafka topic has no concept of</h2>
-    <p>
+    <p class="lede">
       You can move numbers with Kafka alone. What you cannot do is say what a
-      number <em>is</em> — its units, its valid range, how fast it arrives, which
-      session it belongs to, and what happened during that session. Each module
-      here is one of those, taught by making you build it and then breaking it.
+      number <em>is</em> &mdash; its units, its valid range, how fast it arrives,
+      which session it belongs to, and what happened during it. Each module is one
+      of those, taught by making you build it and then break it.
     </p>
   </div>
 
@@ -64,6 +84,13 @@
       <code>lab check</code> runs the identical code the bot runs, so a pass
       locally is a pass in CI. There is no reason to ever push a guess.
     </p>
+
+    <pre class="commands"><span class="c"># once, when the Codespace opens</span>
+docker compose up -d --wait kafka stream-api key-generator
+
+<span class="c"># for every module</span>
+lab check     <span class="c">seconds, on your machine, nothing pushed</span>
+lab submit    <span class="c">branch, push, open the pull request</span></pre>
   </div>
 </section>
 
@@ -71,15 +98,30 @@
   <div class="wrap narrow">
     <p class="label">Prerequisites</p>
     <h2>What you should already know</h2>
-    <p>
-      Enough Python to edit a script and enough command line to run
-      <code>docker compose up</code>. Module 4 asks you to write a consumer, in
-      any language you like — a reference implementation in JavaScript is in the
-      repository to read if you want it.
-    </p>
-    <p>
-      You do not need Kafka experience, motorsport knowledge, or any hardware.
-      The car is simulated and the data is synthetic.
+  </div>
+
+  <div class="wrap">
+    <div class="prereq">
+      <div>
+        <h3>You need</h3>
+        <ul>
+          <li>Enough Python to edit a script</li>
+          <li>Enough command line to run <code>docker compose up</code></li>
+          <li>A GitHub account</li>
+        </ul>
+      </div>
+      <div>
+        <h3>You do not need</h3>
+        <ul>
+          <li>Kafka experience</li>
+          <li>Motorsport knowledge &mdash; the car is simulated</li>
+          <li>Any hardware, or a licence for anything</li>
+        </ul>
+      </div>
+    </div>
+    <p class="prereq-note">
+      Module 04 asks you to write a consumer in any language you like. A reference
+      implementation in JavaScript is in the repository if you want to read one.
     </p>
   </div>
 </section>

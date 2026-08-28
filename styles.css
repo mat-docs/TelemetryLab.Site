@@ -58,6 +58,13 @@
   .wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
   .narrow { max-width: 660px; }
 
+  /* `.wrap.narrow` on one element made it a 660px column centred in the page,
+     while a sibling `.wrap` stayed 1140px - so the left edge jumped between
+     sections and the page read as misaligned. Keep the page gutter, constrain
+     the measure, and every section starts on the same line. */
+  .wrap.narrow { max-width: 1140px; }
+  .wrap.narrow > * { max-width: 660px; }
+
   .label {
     font-family: var(--sans);
     font-size: 11px;
@@ -833,3 +840,63 @@ footer {
   overflow-x: auto;
 }
 .commands .c { color: var(--muted); }
+
+/* ── course page ───────────────────────────────────────────────────── */
+
+/* The steps ran the full 1085px, so a one-line module summary set on a
+   900px measure. Cap the text, keep the number column. */
+.steps li { grid-template-columns: 120px minmax(0, 62ch); }
+
+.prereq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: 6px;
+}
+.prereq > div { background: var(--surface); padding: 24px 26px 26px; }
+.prereq h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+  color: var(--accent);
+}
+.prereq ul { margin: 0; padding: 0; list-style: none; }
+.prereq li {
+  padding: 7px 0 7px 20px;
+  position: relative;
+  color: var(--ink-2);
+  font-size: 15px;
+  border-top: 1px solid var(--line);
+}
+.prereq li:first-child { border-top: 0; }
+.prereq li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 15px;
+  width: 8px; height: 1px;
+  background: var(--line-2);
+}
+.prereq-note { margin: 20px 0 0; max-width: 68ch; color: var(--muted); font-size: 14.5px; }
+@media (max-width: 720px) {
+  .prereq { grid-template-columns: 1fr; }
+}
+
+/* Inline code sat on a background with padding, so a wrapped `docker compose
+   up` broke mid-phrase and read as three separate chips. */
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* The course hero panel is shorter than the landing one - it is supporting
+   evidence here, not the headline act. */
+.course-hero .trace-box { aspect-ratio: 16 / 8; min-height: 170px; }
+.course-hero .readout-inner { grid-template-columns: repeat(3, 1fr); }
+.course-hero .hero-panels { margin-top: 30px; }
+.course-facts { margin-top: 30px; }

@@ -70,7 +70,9 @@ const LAP = __LAP_DATA__;
   (function () {
     const canvas = document.getElementById('trackmap');
     const readout = document.getElementById('readout');
-    if (!canvas || !LAP || !LAP.points) return;
+    // Both pages carry a canvas and a readout, but a page with one and not the
+    // other would otherwise take the whole script down on the first line.
+    if (!canvas || !readout || !LAP || !LAP.points) return;
 
     const ctx = canvas.getContext('2d');
     const pts = LAP.points;
