@@ -213,11 +213,13 @@
   h1 {
     font-family: var(--display);
     font-weight: 700;
-    font-size: clamp(38px, 5.9vw, 72px);
-    line-height: 1.02;
+    font-size: clamp(36px, 5.2vw, 64px);
+    line-height: 1.04;
     letter-spacing: -0.028em;
-    margin: 0 0 22px;
-    max-width: 15ch;
+    margin: 0 0 18px;
+    /* 20ch sets the headline in two lines rather than three, which is what
+       brings the panels up to the fold. */
+    max-width: 20ch;
     text-wrap: balance;
   }
   h1 em { font-style: normal; color: var(--accent); }
