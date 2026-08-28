@@ -138,14 +138,16 @@ const LAP = __LAP_DATA__;
 
       const [minX, minY, maxX, maxY] = LAP.bounds;
       const spanX = Math.max(1, maxX - minX), spanY = Math.max(1, maxY - minY);
-      // Sit the map to the right of the headline on wide screens, centred on narrow.
-      const wide = W > 860;
-      const boxW = wide ? W * 0.60 : W * 0.92;
-      const boxH = wide ? H * 0.66 : H * 0.46;
+      // Contain-fit, centred, in the panel's own box. The previous version
+      // offset the lap to sit beside a headline in a full-bleed hero — in a
+      // 516x290 panel that pushed most of it outside the canvas, which is why
+      // the trace looked faint on desktop and vanished on a phone.
+      const pad = Math.max(14, Math.min(30, W * 0.05));
+      const boxW = Math.max(10, W - pad * 2), boxH = Math.max(10, H - pad * 2);
       scale = Math.min(boxW / spanX, boxH / spanY);
       const drawW = spanX * scale, drawH = spanY * scale;
-      ox = (wide ? W * 0.42 : (W - drawW) / 2) - minX * scale;
-      oy = (wide ? H * 0.14 : H * 0.28) + maxY * scale;
+      ox = pad + (boxW - drawW) / 2 - minX * scale;
+      oy = pad + (boxH + drawH) / 2 + minY * scale;
       return true;
     }
 
@@ -159,15 +161,22 @@ const LAP = __LAP_DATA__;
       ctx.beginPath();
       pts.forEach((p, i) => i ? ctx.lineTo(px(p), py(p)) : ctx.moveTo(px(p), py(p)));
       ctx.closePath();
+      const lw = Math.max(3.2, Math.min(7, W / 78));
       ctx.strokeStyle = '#3A4347';
-      ctx.lineWidth = 7;
+      ctx.lineWidth = lw + 0.6;
       ctx.lineJoin = 'round';
       ctx.stroke();
 
-      // Speed-graded line, as far as the car has got.
-      ctx.lineWidth = 6.5;
+      // The whole speed-graded lap, every frame.
+      //
+      // This used to draw only as far as the car had travelled, so the first
+      // painted frame was a bare grey outline and the shape only arrived after
+      // several seconds of animation — and never at all if rAF was throttled.
+      // The speed profile is the thing worth showing, so it is always there and
+      // the marker is what moves.
+      ctx.lineWidth = lw;
       ctx.lineCap = 'round';
-      for (let i = 1; i <= upto && i < pts.length; i++) {
+      for (let i = 1; i < pts.length; i++) {
         ctx.beginPath();
         ctx.moveTo(px(pts[i - 1]), py(pts[i - 1]));
         ctx.lineTo(px(pts[i]), py(pts[i]));
@@ -179,14 +188,14 @@ const LAP = __LAP_DATA__;
       if (upto > 0 && upto < pts.length) {
         const p = pts[upto];
         ctx.beginPath();
-        ctx.arc(px(p), py(p), 5.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(px(p), py(p), 13, 0, Math.PI * 2);
+        ctx.arc(px(p), py(p), Math.max(9, lw * 1.9), 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(250,105,20,0.45)';
         ctx.lineWidth = 1.5;
         ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(px(p), py(p), Math.max(3.5, lw * 0.8), 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
       }
     }
 
@@ -230,7 +239,7 @@ const LAP = __LAP_DATA__;
       // background or non-compositing tab, and without this the readout sits on
       // em dashes rather than showing a real sample.
       draw(i); update(i);
-      if (reduce) { draw(pts.length - 1); update(pts.length - 1); return; }
+      if (reduce) { draw(0); update(0); return; }
       last = 0;
       raf = requestAnimationFrame(tick);
     }

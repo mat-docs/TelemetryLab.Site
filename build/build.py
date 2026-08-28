@@ -92,19 +92,63 @@ def esc(s) -> str:
     return html.escape(str(s), quote=True)
 
 
+# Motion Applied brand guidelines, February 2026. MA Orange and MA Grey plus
+# their sanctioned tints, white, and the extended palette. Nothing else.
+BRAND_COLOURS = {
+    "#FA6914", "#FB8743", "#FCA572", "#FDC3A1",          # MA Orange + tints
+    "#1F292E", "#2C363B", "#3A4347", "#4C5458",          # MA Grey + tints
+    "#797F82", "#A5A9AB",
+    "#FFFFFF", "#000000",
+    "#DEE2D9", "#38E9FC", "#028091",                     # extended
+}
+BRAND_RGB = {(250, 105, 20), (31, 41, 46)}
+
+
+def audit_colours(css: str) -> list[str]:
+    """Fail the build on any colour outside the brand palette.
+
+    An earlier pass converted every hex to the brand palette but left four
+    rgba(10,13,15,…) literals behind — the old near-black — painting the nav,
+    the readout and the hero scrim a different colour from the page. It shipped,
+    and was only caught by looking at the rendered site. Scanning rgb()/rgba()
+    as well as hex is the check that would have caught it.
+    """
+    import re
+    bad = []
+    for m in re.finditer(r"#[0-9A-Fa-f]{6}\b", css):
+        if m.group(0).upper() not in BRAND_COLOURS:
+            bad.append(m.group(0))
+    for m in re.finditer(r"rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)", css):
+        rgb = tuple(int(g) for g in m.groups())
+        if rgb not in BRAND_RGB and rgb != (255, 255, 255) and rgb != (0, 0, 0):
+            bad.append(f"rgb{rgb}")
+    return sorted(set(bad))
+
+
+def word_count(body: str) -> int:
+    import re
+    t = re.sub(r"<(script|style).*?</\1>", " ", body, flags=re.S)
+    return len(re.sub(r"<[^>]+>", " ", t).split())
+
+
 # --- the catalogue ----------------------------------------------------------
 
 
-def render_catalogue(courses: list[dict]) -> str:
+def render_catalogue(courses: list[dict], only_open: bool = False) -> str:
     """Render the course list from courses.toml.
 
     Two states only — a course is open or it is not. An open course gets a real
     channel in its lane; anything else gets a flat one, which is what an
-    unconnected channel looks like on an instrument and cannot be mistaken for
-    a launch date.
+    unconnected channel looks like on an instrument.
+
+    On the landing page `only_open` drops the unbuilt courses entirely. Rendered,
+    three empty NO SIGNAL lanes read as broken rather than as a device, and they
+    cost about 600px to say nothing. The honest note goes in the markup instead.
     """
     out = []
     for c in courses:
+        if only_open and c.get("status") != "open":
+            continue
         open_ = c.get("status") == "open"
         lane = (
             f'<div class="lane" data-channel="{esc(c.get("channel", ""))}"></div>'
@@ -140,6 +184,18 @@ def render_catalogue(courses: list[dict]) -> str:
             out.append(f'        <ul class="modules">\n{items}\n        </ul>')
         out.append("      </article>")
     return "\n".join(out)
+
+
+def roadmap_note(courses: list[dict]) -> str:
+    """One honest line about what is not built, from the same config."""
+    later = [c for c in courses if c.get("status") != "open"]
+    if not later:
+        return ""
+    names = ", ".join(c["name"] for c in later[:-1])
+    names = f"{names} and {later[-1]['name']}" if names else later[-1]["name"]
+    return (f'<p class="roadmap"><b>{esc(len(later))} more courses are intended</b> — '
+            f'{esc(names)}. None of them are built, and we are not putting dates '
+            f'on them.</p>')
 
 
 def render_steps(modules: list[dict]) -> str:
@@ -250,6 +306,10 @@ def main() -> int:
         return 1
 
     css = read("styles.css")
+    off_brand = audit_colours(css)
+    if off_brand:
+        print("Off-brand colours in styles.css: " + ", ".join(off_brand), file=sys.stderr)
+        return 1
     js = read("app.js").replace("__LAP_DATA__", read("public", "lap.json").strip())
     nav_t = read("partials", "nav.html")
     foot_t = read("partials", "footer.html")
@@ -281,13 +341,20 @@ def main() -> int:
             ),
         )
         write(rel, doc)
+        words = word_count(body)
+        # A regression ceiling, not a target. The landing page was 1,702 words
+        # of prose and read as an essay; it is ~1,150 now, of which the FAQ is
+        # collapsed <details> that cost the reader nothing until opened. If this
+        # trips, prose has crept back in.
+        budget = " (over ceiling)" if rel == "index.html" and words > 1250 else ""
+        print(f"  {rel:<52} {words:>5} words{budget}")
         if robots.startswith("index"):
             pages.append((path, "weekly" if path == "/" else "monthly"))
 
     # --- landing page -------------------------------------------------------
     home_body = read("index.template.html").replace(
-        "__CATALOGUE__", render_catalogue(courses)
-    )
+        "__CATALOGUE__", render_catalogue(courses, only_open=True)
+    ).replace("__ROADMAP__", roadmap_note(courses))
     home_graph = [
         org(),
         {

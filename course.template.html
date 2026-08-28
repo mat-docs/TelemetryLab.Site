@@ -84,4 +84,121 @@
   </div>
 </section>
 
+<section class="band" id="faq">
+  <div class="wrap narrow">
+    <p class="label">Questions</p>
+    <h2>Everything else</h2>
+
+    <div class="faq">
+      <details open>
+        <summary>What is the ATLAS Telemetry Lab?</summary>
+        <p class="a">
+          Free coding exercises that teach how a real-time telemetry pipeline
+          works, by making you run one and change it. You copy a repository, open
+          it in a browser IDE, and a broker, a streaming API and a simulated car
+          start up. You edit code; a bot runs it against the pipeline and reports
+          what happened.
+        </p>
+      </details>
+      <details>
+        <summary>What is ATLAS Open Streaming?</summary>
+        <p class="a">
+          The platform the lab runs on, from Motion Applied. A
+          producer sends data over gRPC to a Stream API, which registers the
+          session, holds the configuration describing each channel, and writes to
+          Apache Kafka. Any number of consumers read from there.
+        </p>
+      </details>
+      <details>
+        <summary>Do I need an ATLAS licence?</summary>
+        <p class="a">
+          Not for course 01. The three images it runs — Apache Kafka, the ATLAS
+          Stream API and the Key Generator — are public on Docker Hub and pull
+          with no account or licence key; that is how the automated validation
+          runs every time. ATLAS Viewer, the commercial desktop application, is
+          not used. If a later course needs a licensed component, its own page
+          will say so.
+        </p>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <p class="a">
+          We charge nothing. The compute is GitHub's and comes out of your own
+          allowance: Actions is unlimited on public repositories and 2,000 minutes
+          a month on private ones, and Codespaces gives personal accounts 120
+          core-hours a month free, or 180 on Pro. On the 2-core machine this uses,
+          120 core-hours is 60 hours of run time.
+        </p>
+      </details>
+      <details>
+        <summary>How long does course 01 take?</summary>
+        <p class="a">
+          We do not know yet, and any figure we gave you would be invented. Nobody
+          outside the team has run it start to finish. What is measured: four
+          modules, a Codespace that takes about three and a half minutes to become
+          usable, and a validation run of roughly two minutes each time you
+          submit. We will publish a real number when we have one.
+        </p>
+      </details>
+      <details>
+        <summary>What do I need installed?</summary>
+        <p class="a">
+          Nothing, if you use a Codespace — it arrives with Docker, Python 3.12
+          and Node 22 in it and the container images already pulled. To work on
+          your own machine instead you need those three, and the same
+          <code>docker compose up</code> brings the stack up.
+        </p>
+      </details>
+      <details>
+        <summary>How is my work marked?</summary>
+        <p class="a">
+          A GitHub Actions workflow in your own repository runs the whole pipeline
+          against what you wrote and comments on your pull request. It grades
+          behaviour, not shape: it never looks for a particular line of code, it
+          runs the thing and checks what it did. Solve a module a different way
+          and it still passes.
+        </p>
+      </details>
+      <details>
+        <summary>Does my repository have to be public?</summary>
+        <p class="a">
+          No. It is your repository and the choice is yours. Public means the
+          Actions minutes are unlimited and your work is linkable, which is the
+          point of the completion page. Private works too, and draws on your 2,000
+          free minutes a month.
+        </p>
+      </details>
+      <details>
+        <summary>Do I need to know anything about motorsport?</summary>
+        <p class="a">
+          No. The simulated car is a convenient source of realistic multi-rate
+          data with laps and events in it. Motion Applied document ATLAS as being
+          used in motorsport, aerospace, research and robotics, and the ideas here
+          — sessions, parameter definitions, contiguous timestamps, markers — do
+          not depend on the domain.
+        </p>
+      </details>
+      <details>
+        <summary>Can I use a language other than Python or JavaScript?</summary>
+        <p class="a">
+          Yes, from Module 04. The producer and the reference consumer are Python
+          and JavaScript, but the wire format is protobuf over Kafka and the
+          definitions ship in the repository. Module 04 compares what your
+          consumer reports against what the producer recorded sending, whatever
+          you wrote it in.
+        </p>
+      </details>
+      <details>
+        <summary>Who made this, and why?</summary>
+        <p class="a">
+          Motion Applied, who build ATLAS. The honest reason: engineers who learn
+          telemetry on a platform tend to reach for it again later. The stack the
+          courses use is free and public either way, and everything you write
+          stays yours.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
 </main>
