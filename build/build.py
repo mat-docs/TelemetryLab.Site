@@ -32,7 +32,17 @@ SITE = os.path.join(HERE, "..")
 DIST = os.path.join(SITE, "dist")
 PUBLIC = os.path.join(SITE, "public")
 
-ORIGIN = "https://telemetrylab.atlas.motionapplied.com"
+# Where the site is actually served from. Canonical tags, og:image, the sitemap
+# and llms.txt are all built off this, so a hardcoded value that is not live
+# points every one of them at a domain that does not answer.
+#
+# Netlify sets URL to the site's primary address, which becomes the custom
+# domain the moment one is attached — so this corrects itself at that point with
+# no code change. SITE_ORIGIN overrides it for a one-off build; the literal is
+# only the fallback for building locally.
+ORIGIN = (os.environ.get("SITE_ORIGIN")
+          or os.environ.get("URL")
+          or "https://atlastelemetrylab.netlify.app").rstrip("/")
 SITE_NAME = "ATLAS Telemetry Lab"
 PUBLISHER = "Motion Applied"
 LAB_REPO = "https://github.com/mat-docs/TelemetryLab.Foundations"

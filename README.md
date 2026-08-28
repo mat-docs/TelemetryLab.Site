@@ -151,3 +151,10 @@ python build/refresh_lap.py --lab ../telemetry-lab
 
 Netlify, from `netlify.toml`. Publish directory `dist`, build command
 `python build/build.py`, Python 3.12.
+
+Canonical tags, `og:image`, the sitemap and `llms.txt` are all built from
+`ORIGIN`, which reads Netlify's `URL` environment variable. That is the site's
+primary address, so **attaching the custom domain is enough** — the next deploy
+picks it up and nothing here needs editing. `SITE_ORIGIN` overrides it for a
+one-off build, and the literal in `build/build.py` is only the fallback for
+building locally.
