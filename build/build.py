@@ -376,7 +376,7 @@ def main() -> int:
         body='''<main id="main">
 <section class="band">
   <div class="wrap narrow">
-    <p class="label">404.</p>
+    <p class="label">404</p>
     <h2>No signal on that channel</h2>
     <p class="lede">That page does not exist. It may have moved, or it may never
       have been built — three of the four courses have not been.</p>
