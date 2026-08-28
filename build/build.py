@@ -35,7 +35,10 @@ PUBLIC = os.path.join(SITE, "public")
 ORIGIN = "https://telemetrylab.atlas.motionapplied.com"
 SITE_NAME = "ATLAS Telemetry Lab"
 PUBLISHER = "Motion Applied"
-LAB_REPO = "https://github.com/motionapplied/atlas-telemetry-lab"
+LAB_REPO = "https://github.com/mat-docs/TelemetryLab.Foundations"
+# "Use this template" deep link — lands the learner on the form that creates
+# their own copy, rather than on the repo to hunt for the button.
+LAB_GENERATE = f"{LAB_REPO}/generate"
 
 DOCUMENT = """<!doctype html>
 <html lang="en">
@@ -90,6 +93,12 @@ DOCUMENT = """<!doctype html>
 
 def esc(s) -> str:
     return html.escape(str(s), quote=True)
+
+
+def link(markup: str) -> str:
+    """Resolve the template-repo placeholders in any fragment."""
+    return (markup.replace("__LAB_GENERATE__", LAB_GENERATE)
+                  .replace("__LAB_REPO__", LAB_REPO))
 
 
 # Motion Applied brand guidelines, February 2026. MA Orange and MA Grey plus
@@ -320,9 +329,9 @@ def main() -> int:
             robots=robots,
             css=css,
             js=js,
-            nav=nav_t.replace("{root}", root or "/"),
-            footer=foot_t.replace("{root}", root or "/"),
-            body=body,
+            nav=link(nav_t.replace("{root}", root or "/")),
+            footer=link(foot_t.replace("{root}", root or "/")),
+            body=link(body),
             jsonld=json.dumps(
                 {"@context": "https://schema.org", "@graph": jsonld},
                 indent=2, ensure_ascii=False,
@@ -403,7 +412,7 @@ def main() -> int:
                 .replace("{steps}", render_steps(modules)))
         page(
             f"courses/{c['slug']}/index.html",
-            body=body,
+            body=link(body),
             title=f"{c['name']} — {SITE_NAME}",
             og_title=c["name"],
             description=c.get("description", c["summary"]),
@@ -456,9 +465,9 @@ def main() -> int:
           '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
           '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">\n'
           f"<style>\n{css}\n</style>\n"
-          + nav_t.replace("{root}", "#") + "\n"
-          + home_body + "\n"
-          + foot_t.replace("{root}", "#") + "\n"
+          + link(nav_t.replace("{root}", "#")) + "\n"
+          + link(home_body) + "\n"
+          + link(foot_t.replace("{root}", "#")) + "\n"
           f"<script>\n{js}\n</script>\n")
 
     # --- machine-readable ---------------------------------------------------
@@ -572,6 +581,7 @@ def llms_txt(courses: list[dict]) -> str:
         "",
         f"- [Course catalogue]({ORIGIN}/#catalogue)",
         f"- [Frequently asked questions]({ORIGIN}/#faq)",
+        f"- [Course 01 template repository]({LAB_REPO}) — generate your own copy to take the course",
         "- [ATLAS Open Streaming images on Docker Hub](https://hub.docker.com/u/atlasplatformdocker)",
         "- [ATLAS documentation](https://atlas.motionapplied.com)",
         "",
