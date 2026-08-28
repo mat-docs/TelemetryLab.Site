@@ -46,7 +46,7 @@ DOCUMENT = """<!doctype html>
 <meta name="description" content="{description}">
 <link rel="canonical" href="{canonical}">
 <meta name="robots" content="{robots}">
-<meta name="theme-color" content="#0A0D0F">
+<meta name="theme-color" content="#1F292E">
 <meta name="color-scheme" content="dark">
 
 <meta property="og:site_name" content="{site_name}">
@@ -65,8 +65,8 @@ DOCUMENT = """<!doctype html>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230A0D0F'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23ED6D20' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231F292E'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23FA6914' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
 
 <style>
 {css}
@@ -376,8 +376,8 @@ def main() -> int:
         body='''<main id="main">
 <section class="band">
   <div class="wrap narrow">
-    <p class="label">404</p>
-    <h2>No signal on that channel.</h2>
+    <p class="label">404.</p>
+    <h2>No signal on that channel</h2>
     <p class="lede">That page does not exist. It may have moved, or it may never
       have been built — three of the four courses have not been.</p>
     <div class="cta-row" style="margin-top:28px;">
@@ -399,7 +399,7 @@ def main() -> int:
           f"<title>{esc(SITE_NAME)}</title>\n"
           '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
           '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">\n'
+          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">\n'
           f"<style>\n{css}\n</style>\n"
           + nav_t.replace("{root}", "#") + "\n"
           + home_body + "\n"

@@ -79,7 +79,7 @@ const LAP = __LAP_DATA__;
     // Single-hue sequential ramp for speed. Speed is a magnitude, not a
     // polarity, so it gets one hue stepped in lightness — a two-hue gradient
     // would imply a meaningful midpoint, and 140 km/h is not a neutral value.
-    const RAMP = ['#5A2609', '#A8480F', '#ED6D20', '#F9A463', '#FFD9B0'];
+    const RAMP = ['#FA6914', '#FB8743', '#FCA572', '#FDC3A1'];
 
     function rampAt(t) {
       const x = Math.max(0, Math.min(1, t));
@@ -159,7 +159,7 @@ const LAP = __LAP_DATA__;
       ctx.beginPath();
       pts.forEach((p, i) => i ? ctx.lineTo(px(p), py(p)) : ctx.moveTo(px(p), py(p)));
       ctx.closePath();
-      ctx.strokeStyle = '#1B2429';
+      ctx.strokeStyle = '#3A4347';
       ctx.lineWidth = 7;
       ctx.lineJoin = 'round';
       ctx.stroke();
@@ -180,11 +180,11 @@ const LAP = __LAP_DATA__;
         const p = pts[upto];
         ctx.beginPath();
         ctx.arc(px(p), py(p), 5.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#FFF6EE';
+        ctx.fillStyle = '#FFFFFF';
         ctx.fill();
         ctx.beginPath();
         ctx.arc(px(p), py(p), 13, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255,214,178,0.28)';
+        ctx.strokeStyle = 'rgba(250,105,20,0.45)';
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }

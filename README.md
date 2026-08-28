@@ -97,6 +97,44 @@ legibility floor.
 - **The FAQ is real content first.** The eight questions are the ones engineers
   actually ask, answered in 40–60 words each so a passage stands on its own.
 
+## Brand
+
+Built to the Motion Applied brand guidelines (February 2026).
+
+| | |
+|---|---|
+| MA Orange | `#FA6914` |
+| MA Grey | `#1F292E` |
+| Neutrals | tints of MA Grey — 94%, 88%, 80%, 60%, 40% |
+| Extended | Cool Grey `#DEE2D9` for body copy |
+| Typeface | Montserrat, with Arial as the stated fallback |
+
+Every neutral is MA Grey or a computed tint of it, because the guidelines
+forbid introducing unsanctioned colours. Tint N% = N% MA Grey + (100−N)% white.
+The guidelines illustrate 80/60/40; the 94% and 88% steps continue that scale
+and exist because a dark interface needs two surfaces just above the ground.
+
+The speed ramp on the lap and the social card is the sanctioned tint scale of
+MA Orange — 100%, 80%, 60%, 40% — which is monotonic in lightness, so it works
+as a sequential scale without inventing colours.
+
+Typography follows the stated hierarchy: headlines and CTAs Montserrat Bold in
+sentence case with no closing punctuation; sub-heads with closing punctuation;
+body copy Montserrat Regular, which is what the guidelines specify on a dark
+background. Monospace is not covered by the guidelines and appears only inside
+`<code>` and the simulated terminal readout, using the system stack so no second
+typeface competes with Montserrat.
+
+Contrast on the `#1F292E` ground: white 14.8:1, Cool Grey 11.3:1, Grey 40%
+6.3:1, MA Orange 5.0:1 — all pass AA for body text. Grey 60% and 80% are 3.7:1
+and 1.9:1, so they draw lines and never text. MA Grey on an MA Orange button is
+5.0:1; white would have been 2.96:1 and was not used.
+
+**Not yet applied:** the Motion Applied logo. The guidelines require the logo to
+be used with its symbol and never redrawn, and no asset was supplied — the nav
+and footer currently carry a text wordmark. That needs the real file before
+launch.
+
 ## The hero lap is real
 
 The animated lap and the social card are actual telemetry from the lab's
