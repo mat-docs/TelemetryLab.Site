@@ -563,6 +563,10 @@ def llms_txt(courses: list[dict]) -> str:
         "- Runs in: a GitHub Codespace (nothing installed locally), or locally with "
         "Docker, Python 3.12 and Node 22.",
         "- Resource use: the stack idles at about 442 MiB across three containers.",
+        "- Teaching: a `lab explain` command covers eight topics - sessions, parameters, "
+        "timestamps, packets, configuration, streams, the Stream API and consumers - "
+        "each showing the real protobuf definitions from the repository and how to "
+        "apply the idea to the learner's own systems.",
         "- Grading: an automated bot runs in the learner's own repository and grades "
         "behaviour rather than code shape — it runs the pipeline and checks what it did.",
         "- Completion: there is no certificate. What a learner ends up with is their "

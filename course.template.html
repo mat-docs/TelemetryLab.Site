@@ -83,14 +83,17 @@
     <p>
       <code>lab check</code> runs the identical code the bot runs, so a pass
       locally is a pass in CI. There is no reason to ever push a guess.
+      <code>lab submit</code> then waits for the bot, prints what it found, and
+      moves you onto the next module once it merges.
     </p>
 
     <pre class="commands"><span class="c"># once, when the Codespace opens</span>
 docker compose up -d --wait kafka stream-api key-generator
 
 <span class="c"># for every module</span>
+lab explain   <span class="c">why this stage works the way it does</span>
 lab check     <span class="c">seconds, on your machine, nothing pushed</span>
-lab submit    <span class="c">branch, push, open the pull request</span></pre>
+lab submit    <span class="c">push, wait for the verdict, move to the next module</span></pre>
   </div>
 </section>
 
@@ -122,6 +125,27 @@ lab submit    <span class="c">branch, push, open the pull request</span></pre>
     <p class="prereq-note">
       Module 04 asks you to write a consumer in any language you like. A reference
       implementation in JavaScript is in the repository if you want to read one.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">Beyond the exercises</p>
+    <h2>You will know why it works, not just that it passed</h2>
+    <p class="lede">
+      Every module has a <code>lab explain</code> topic behind it &mdash; eight in
+      total, covering sessions, parameters, timestamps, packets, configuration,
+      streams, the Stream API and consumers.
+    </p>
+    <p>
+      Each one shows the real protobuf definitions, read out of the repository's
+      own <code>.proto</code> files, and ends with how to apply the idea to
+      systems of your own. The protocol details are checked against the
+      <a href="https://github.com/Software-Products/MA.DataPlatforms.StreamApi" rel="noopener">Stream API</a>
+      and <a href="https://github.com/Software-Products/MA.DataPlatforms.Protocol" rel="noopener">Protocol</a>
+      source rather than written from memory &mdash; including the failures that
+      report success, which is most of what costs people a day.
     </p>
   </div>
 </section>
