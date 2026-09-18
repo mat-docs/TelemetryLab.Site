@@ -1,0 +1,89 @@
+<main id="main">
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="crumbs">
+      <a href="../">ATLAS Telemetry Lab</a> &nbsp;/&nbsp; Privacy
+    </p>
+    <p class="label">Privacy</p>
+    <h2>What we collect</h2>
+    <p class="lede">
+      Two things, and only one of them by default. This page lists both, field by
+      field.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">This site</p>
+    <h2>Page views, without cookies</h2>
+    <p>
+      The site uses Google Analytics to count page views and clicks on the
+      start-course buttons. It runs with consent set to denied for every storage
+      type, so no cookies are set for analytics; Google counts from cookieless
+      pings instead, which makes the numbers approximate. There is no cookie
+      banner because nothing here asks for consent.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">The course</p>
+    <h2>Progress, only if you say yes</h2>
+    <p>
+      The course runs in a repository you own. The first time you run
+      <code>lab submit</code> it asks once whether to share anonymous progress.
+      Say nothing, or no, and nothing is sent. Say yes and the grading workflow
+      sends, each time it grades a pull request:
+    </p>
+    <ul>
+      <li>the module number</li>
+      <li>pass or fail</li>
+      <li>the course name</li>
+      <li>the template version</li>
+      <li>a random ID generated for that copy of the course</li>
+    </ul>
+    <p>
+      It does not send your GitHub username, the repository name, or any code.
+      The ID is random and is not derived from anything about you.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">Our endpoint</p>
+    <h2>What it sees and does not keep</h2>
+    <p>
+      The request carries a short-lived GitHub Actions token so our endpoint can
+      check it came from a real grading run and not from anything else. That
+      token contains the repository name. The endpoint reads it only to verify
+      the request; it does not log it and does not store it.
+    </p>
+    <p>
+      We keep no record of our own. The event is forwarded to Google Analytics
+      and that is the only place it exists.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <p class="label">Turning it off</p>
+    <h2>One command</h2>
+    <pre class="commands"><span class="c"># in your repository</span>
+lab share off</pre>
+    <p>
+      It takes effect from your next submit. <code>lab share on</code> turns it
+      back on; <code>lab share status</code> shows which you are on.
+    </p>
+    <p>
+      Questions about any of this: open an issue on the
+      <a href="__LAB_REPO__/issues" rel="noopener">course template repository</a>.
+    </p>
+  </div>
+</section>
+
+</main>

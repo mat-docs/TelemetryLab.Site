@@ -268,3 +268,21 @@ const LAP = __LAP_DATA__;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(start);
     window.addEventListener('load', start);
   })();
+
+  /* ── start_course ───────────────────────────────────────────────────
+     One delegated listener for every "get your copy" link. Fires only when
+     the GA4 tag is on the page, which a local build never has. */
+  (function () {
+    document.addEventListener('click', function (e) {
+      const a = e.target.closest && e.target.closest('a[href*="/generate"]');
+      if (!a || typeof window.gtag !== 'function') return;
+      // The same link sits in the nav, the hero and the end of the page. Which
+      // one gets clicked is the point of measuring: it says where people decide.
+      // The nav CTA lives in <header class="nav">, not inside the <nav> element.
+      const placement =
+        a.closest('footer') ? 'footer' :
+        a.closest('header, nav') ? 'nav' :
+        a.closest('.hero, .course-hero') ? 'hero' : 'body';
+      window.gtag('event', 'start_course', { placement });
+    });
+  })();

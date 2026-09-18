@@ -43,6 +43,9 @@ PUBLIC = os.path.join(SITE, "public")
 ORIGIN = (os.environ.get("SITE_ORIGIN")
           or os.environ.get("URL")
           or "https://atlastelemetrylab.netlify.app").rstrip("/")
+# GA4 property. Unset for a local build, which then ships no analytics at all;
+# set as a Netlify build variable for the deployed site.
+GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "").strip()
 SITE_NAME = "ATLAS Telemetry Lab"
 PUBLISHER = "Motion Applied"
 LAB_REPO = "https://github.com/mat-docs/TelemetryLab.Foundations"
@@ -79,7 +82,7 @@ DOCUMENT = """<!doctype html>
 <!-- No web font: @atlas/design-system's one font role is a native stack
      (Helvetica Neue / Arial / system-ui), so there is nothing to fetch. -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230A0A0A'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23FF6600' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
-
+{analytics}
 <style>
 {css}
 </style>
@@ -108,6 +111,40 @@ def link(markup: str) -> str:
     """Resolve the template-repo placeholders in any fragment."""
     return (markup.replace("__LAB_GENERATE__", LAB_GENERATE)
                   .replace("__LAB_REPO__", LAB_REPO))
+
+
+def analytics_snippet() -> str:
+    """The GA4 tag, or nothing.
+
+    Consent Mode defaults are set to denied for every storage type before the
+    tag is configured, so gtag never writes a cookie: it sends cookieless pings
+    and the counts are approximate. That is why the site has no consent
+    banner — there is no consent to ask for. The privacy page says exactly this,
+    so the order of the calls below is load-bearing: consent first, then config.
+    """
+    import re
+    if not GA4_MEASUREMENT_ID:
+        return ""
+    if not re.fullmatch(r"G-[A-Z0-9]+", GA4_MEASUREMENT_ID):
+        raise SystemExit(
+            f"GA4_MEASUREMENT_ID must look like G-XXXXXXXX, got {GA4_MEASUREMENT_ID!r}"
+        )
+    mid = GA4_MEASUREMENT_ID
+    return (
+        f'<script async src="https://www.googletagmanager.com/gtag/js?id={mid}"></script>\n'
+        "<script>\n"
+        "window.dataLayer = window.dataLayer || [];\n"
+        "function gtag(){dataLayer.push(arguments);}\n"
+        "gtag('consent', 'default', {\n"
+        "  ad_storage: 'denied',\n"
+        "  ad_user_data: 'denied',\n"
+        "  ad_personalization: 'denied',\n"
+        "  analytics_storage: 'denied'\n"
+        "});\n"
+        "gtag('js', new Date());\n"
+        f"gtag('config', '{mid}');\n"
+        "</script>"
+    )
 
 
 # @atlas/design-system v0.1.0 tokens, plus the four computed orange tints
@@ -337,6 +374,7 @@ def main() -> int:
             origin=ORIGIN,
             site_name=SITE_NAME,
             robots=robots,
+            analytics=analytics_snippet(),
             css=css,
             js=js,
             nav=link(nav_t.replace("{root}", root or "/")),
@@ -443,6 +481,34 @@ def main() -> int:
                 },
             ],
         )
+
+    # --- privacy ------------------------------------------------------------
+    privacy_description = (
+        "What this site collects, what the course sends if you opt in to share "
+        "progress, and how to turn it off."
+    )
+    page(
+        "privacy/index.html",
+        body=read("privacy.template.html"),
+        title=f"Privacy — {SITE_NAME}",
+        og_title="Privacy",
+        description=privacy_description,
+        path="/privacy/",
+        depth=1,
+        jsonld=[
+            org(),
+            {
+                "@type": "WebPage",
+                "@id": f"{ORIGIN}/privacy/#page",
+                "name": "Privacy",
+                "description": privacy_description,
+                "url": f"{ORIGIN}/privacy/",
+                "isPartOf": {"@id": f"{ORIGIN}/#site"},
+                "publisher": org(),
+                "inLanguage": "en",
+            },
+        ],
+    )
 
     # --- 404 ----------------------------------------------------------------
     page(
@@ -575,6 +641,11 @@ def llms_txt(courses: list[dict]) -> str:
         "not built.",
         "- ATLAS Viewer, the commercial desktop analysis application, is a separate "
         "licensed product and is not required.",
+        "- Progress reporting is opt-in and anonymous. If a learner says yes when "
+        "`lab submit` asks, each graded pull request sends the module number, pass or "
+        "fail, the course name, the template version and a random ID for that copy of "
+        "the course. No username, repository name or code. Off by default; `lab share "
+        "off` turns it off again.",
         "",
         "## Courses",
         "",
@@ -595,6 +666,7 @@ def llms_txt(courses: list[dict]) -> str:
         "",
         f"- [Course catalogue]({ORIGIN}/#catalogue)",
         f"- [Frequently asked questions]({ORIGIN}/#faq)",
+        f"- [Privacy]({ORIGIN}/privacy/) — what the site collects and what the course sends if you opt in",
         f"- [Course 01 template repository]({LAB_REPO}) — generate your own copy to take the course",
         "- [ATLAS Open Streaming images on Docker Hub](https://hub.docker.com/u/atlasplatformdocker)",
         "- [ATLAS documentation](https://atlas.motionapplied.com)",
