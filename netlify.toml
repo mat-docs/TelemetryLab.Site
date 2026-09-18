@@ -1,9 +1,12 @@
 # Deploy target: telemetrylab.atlas.motionapplied.com
 #
-# The build is one Python script and no dependencies. The hero lap is real
-# telemetry from the lab's simulator, exported once by build/refresh_lap.py and
-# committed as public/lap.json - so this repository builds on its own, with no
-# checkout of the lab and nothing to install.
+# The pages are built by one Python script (build/build.py). The Node
+# dependencies in package.json exist only for netlify/functions/progress.mjs,
+# the opt-in course-progress endpoint; vendor/ holds the design-system tarball
+# whose token values live in styles.css. The hero lap is real telemetry from
+# the lab's simulator, exported once by build/refresh_lap.py and committed as
+# public/lap.json - so this repository builds on its own, with no checkout of
+# the lab.
 
 [build]
   publish = "dist"
@@ -11,6 +14,10 @@
 
 [build.environment]
   PYTHON_VERSION = "3.12"
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
 
 [[headers]]
   for = "/*"
