@@ -81,7 +81,8 @@ DOCUMENT = """<!doctype html>
 
 <!-- No web font: @atlas/design-system's one font role is a native stack
      (Helvetica Neue / Arial / system-ui), so there is nothing to fetch. -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230A0A0A'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23FF6600' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/atlas-mark.png">
 {analytics}
 <style>
 {css}

@@ -549,7 +549,9 @@
   gap: 26px;
   height: 62px;
 }
-.nav-brand { text-decoration: none; flex: none; }
+.nav-brand { text-decoration: none; flex: none; display: inline-flex; align-items: center; gap: 10px; }
+/* The ATLAS product icon, used as supplied - never redrawn. */
+.logo { display: block; flex: none; width: 26px; height: 26px; }
 .nav-brand .mark {
   font-family: var(--sans);
   font-size: 11.5px;
@@ -557,8 +559,6 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink);
-  border-left: 3px solid var(--accent);
-  padding-left: 10px;
 }
 .nav-links {
   display: flex;
@@ -719,6 +719,8 @@ footer {
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 40px;
 }
+.foot-brand .brand-row { display: flex; align-items: center; gap: 12px; }
+.foot-brand .logo { width: 32px; height: 32px; }
 .foot-brand .mark {
   font-family: var(--sans);
   font-size: 11.5px;
@@ -726,8 +728,6 @@ footer {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink);
-  border-left: 3px solid var(--accent);
-  padding-left: 10px;
 }
 .foot-brand p { margin: 16px 0 0; max-width: 42ch; }
 .foot-col h2 {
