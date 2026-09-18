@@ -1,37 +1,48 @@
-/* Motion Applied brand guidelines, February 2026.
-     Primary palette: MA Orange #FA6914, MA Grey #1F292E. Those two lead; the
-     extended palette is for accents only.
+/* @atlas/design-system v0.1.0 — Motion Applied's shared token set, extracted
+     from ATLAS Web Viewer (npm install atlas-design-system-0.1.0.tgz).
+     Dark-only, sharp-edged (--radius: 2px — this site already draws every
+     panel as a flat 1px-hairline rectangle, so nothing here needed rounding).
+     Values below are copied straight from the package's src/styles/tokens.css
+     rather than re-derived, so this file has one source of truth to track.
 
-     Every neutral here is MA Grey or a tint of it, computed rather than picked,
-     because the guidelines forbid introducing unsanctioned colours. Tint N% =
-     N% MA Grey + (100-N)% white. The guidelines illustrate 80/60/40; the 94%
-     and 88% steps continue the same scale and exist because a dark interface
-     needs two surfaces just above the ground.
+     The package defines two text tiers (foreground/muted-foreground), not
+     three — --ink and --ink-2 are intentionally the same value now; there is
+     no third, dimmer "body copy" grey in the source to alias instead.
 
-     Contrast against the #1F292E ground: white 14.8:1, Cool Grey 11.3:1,
-     Grey 40% 6.3:1, MA Orange 5.0:1 — all pass AA for body text. Grey 60% and
-     80% are 3.7:1 and 1.9:1, so they draw lines and never text. */
+     The package ships one accent (--primary: #FF6600) and no tint ramp for
+     it, so --accent-d/-l and the hero trace's speed ramp are computed tints
+     of that single primary — same 80%/60%/40%-toward-white formula this file
+     used before, now anchored to the package's orange instead of an
+     independently-picked one. Keep these four values in sync if --primary
+     ever changes upstream.
+
+     Contrast against the #0A0A0A ground: foreground 17.8:1, muted-foreground
+     8.0:1, accent-l (the link colour) 9.9:1 — all comfortably clear AA. */
   :root {
     color-scheme: dark;
-    --ground:   #1F292E;   /* MA Grey */
-    --surface:  #2C363B;   /* MA Grey, 94% tint */
-    --raised:   #3A4347;   /* MA Grey, 88% tint */
-    --line:     #4C5458;   /* MA Grey, 80% tint */
-    --line-2:   #797F82;   /* MA Grey, 60% tint */
-    --muted:    #A5A9AB;   /* MA Grey, 40% tint */
-    --ink-2:    #DEE2D9;   /* MA Cool Grey, extended palette */
-    --ink:      #FFFFFF;   /* MA White */
-    --accent:   #FA6914;   /* MA Orange */
-    --accent-d: #FB8743;   /* MA Orange, 80% tint */
-    --accent-l: #FCA572;   /* MA Orange, 60% tint */
+    --ground:   #0A0A0A;   /* --background */
+    --surface:  #131313;   /* --card */
+    --raised:   #1A1A1A;   /* --secondary / --muted */
+    --line:     #272727;   /* --border */
+    --line-2:   #3A3A3A;   /* --border-strong */
+    --muted:    #A8A8A8;   /* --muted-foreground */
+    --ink-2:    #F4F4F4;   /* --foreground — aliased to --ink, see note above */
+    --ink:      #F4F4F4;   /* --foreground */
+    --accent:   #FF6600;   /* --primary */
+    --accent-d: #FF8533;   /* --primary, 80% tint toward white */
+    --accent-l: #FFA366;   /* --primary, 60% tint toward white */
 
-    /* Montserrat is the brand's primary typeface, Arial its stated fallback.
-       Monospace is not covered by the guidelines and is used only inside
-       <code>, where a proportional face would misrepresent what is written. */
-    --sans: Montserrat, Arial, Helvetica, sans-serif;
-    --display: Montserrat, Arial, Helvetica, sans-serif;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    /* The package has one font role (--font-sans) and no separate display
+       face, so headings and body share it rather than keeping an invented
+       distinction the source doesn't make. */
+    --sans: 'Helvetica Neue', Helvetica, Arial, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: 'Helvetica Neue', Helvetica, Arial, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'SFMono-Regular', Menlo, Consolas, monospace;
   }
+
+  /* The package's shared base layer: every heading across Motion Applied's
+     products in this system is set in caps with a touch of tracking. */
+  h1, h2, h3, h4 { text-transform: uppercase; letter-spacing: 0.02em; }
 
   * { box-sizing: border-box; }
 
@@ -254,7 +265,7 @@
     padding: 14px 22px;
     border: 1px solid var(--accent);
     background: var(--accent);
-    color: var(--ground);   /* MA Grey on MA Orange: 5.01:1. White is 2.96:1. */
+    color: var(--ground);   /* Ground on accent: 6.8:1. Foreground on accent: 2.5:1. */
     transition: background .16s ease, color .16s ease;
   }
   .btn:hover { background: var(--accent-l); border-color: var(--accent-l); }
@@ -529,7 +540,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(31, 41, 46, 0.92);
+  background: rgba(10, 10, 10, 0.92);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }

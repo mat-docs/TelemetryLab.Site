@@ -28,12 +28,13 @@ OUT = os.path.join(SITE, "dist", "og.png")
 
 W, H = 1200, 630
 SS = 2                                   # supersample factor
-GROUND = (0x1F, 0x29, 0x2E)   # MA Grey
-DIM = (0x3A, 0x43, 0x47)      # MA Grey, 88% tint
-ACCENT = (0xFA, 0x69, 0x14)   # MA Orange
-# Sanctioned tints of MA Orange: 100%, 80%, 60%, 40%.
-RAMP = [(0xFA, 0x69, 0x14), (0xFB, 0x87, 0x43),
-        (0xFC, 0xA5, 0x72), (0xFD, 0xC3, 0xA1)]
+# @atlas/design-system v0.1.0 — see styles.css for the full token mapping.
+GROUND = (0x0A, 0x0A, 0x0A)   # --background
+DIM = (0x3A, 0x3A, 0x3A)      # --border-strong
+ACCENT = (0xFF, 0x66, 0x00)   # --primary
+# Computed tints of --primary, 100%/80%/60%/40% toward white.
+RAMP = [(0xFF, 0x66, 0x00), (0xFF, 0x85, 0x33),
+        (0xFF, 0xA3, 0x66), (0xFF, 0xC2, 0x99)]
 
 
 def ramp_at(t: float) -> tuple[int, int, int]:

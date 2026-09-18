@@ -1,3 +1,4 @@
 dist/
 __pycache__/
 _*.py
+node_modules/

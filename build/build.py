@@ -59,7 +59,7 @@ DOCUMENT = """<!doctype html>
 <meta name="description" content="{description}">
 <link rel="canonical" href="{canonical}">
 <meta name="robots" content="{robots}">
-<meta name="theme-color" content="#1F292E">
+<meta name="theme-color" content="#0A0A0A">
 <meta name="color-scheme" content="dark">
 
 <meta property="og:site_name" content="{site_name}">
@@ -76,10 +76,9 @@ DOCUMENT = """<!doctype html>
 <meta name="twitter:description" content="{description}">
 <meta name="twitter:image" content="{origin}/og.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231F292E'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23FA6914' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+<!-- No web font: @atlas/design-system's one font role is a native stack
+     (Helvetica Neue / Arial / system-ui), so there is nothing to fetch. -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230A0A0A'/><path d='M3 22 L11 22 L16 9 L21 26 L26 18 L29 18' stroke='%23FF6600' stroke-width='2.5' fill='none' stroke-linejoin='round' stroke-linecap='round'/></svg>">
 
 <style>
 {css}
@@ -111,16 +110,17 @@ def link(markup: str) -> str:
                   .replace("__LAB_REPO__", LAB_REPO))
 
 
-# Motion Applied brand guidelines, February 2026. MA Orange and MA Grey plus
-# their sanctioned tints, white, and the extended palette. Nothing else.
+# @atlas/design-system v0.1.0 tokens, plus the four computed orange tints
+# (see styles.css) this site derives from the package's one accent. Nothing
+# else — same rule as before, now checked against the package instead of the
+# brand PDF it replaced.
 BRAND_COLOURS = {
-    "#FA6914", "#FB8743", "#FCA572", "#FDC3A1",          # MA Orange + tints
-    "#1F292E", "#2C363B", "#3A4347", "#4C5458",          # MA Grey + tints
-    "#797F82", "#A5A9AB",
-    "#FFFFFF", "#000000",
-    "#DEE2D9", "#38E9FC", "#028091",                     # extended
+    "#FF6600", "#FF8533", "#FFA366", "#FFC299",          # --primary + tints
+    "#0A0A0A", "#131313", "#1A1A1A",                     # --background/--card/--secondary
+    "#272727", "#3A3A3A",                                # --border/--border-strong
+    "#F4F4F4", "#A8A8A8",                                # --foreground/--muted-foreground
 }
-BRAND_RGB = {(250, 105, 20), (31, 41, 46)}
+BRAND_RGB = {(255, 102, 0), (10, 10, 10)}
 
 
 def audit_colours(css: str) -> list[str]:

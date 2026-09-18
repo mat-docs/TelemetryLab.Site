@@ -81,7 +81,9 @@ const LAP = __LAP_DATA__;
     // Single-hue sequential ramp for speed. Speed is a magnitude, not a
     // polarity, so it gets one hue stepped in lightness — a two-hue gradient
     // would imply a meaningful midpoint, and 140 km/h is not a neutral value.
-    const RAMP = ['#FA6914', '#FB8743', '#FCA572', '#FDC3A1'];
+    // Computed tints of the design system's one accent (--primary: #FF6600) —
+    // same 100/80/60/40%-toward-white steps as styles.css's --accent-d/-l.
+    const RAMP = ['#FF6600', '#FF8533', '#FFA366', '#FFC299'];
 
     function rampAt(t) {
       const x = Math.max(0, Math.min(1, t));
@@ -164,7 +166,7 @@ const LAP = __LAP_DATA__;
       pts.forEach((p, i) => i ? ctx.lineTo(px(p), py(p)) : ctx.moveTo(px(p), py(p)));
       ctx.closePath();
       const lw = Math.max(3.2, Math.min(7, W / 78));
-      ctx.strokeStyle = '#3A4347';
+      ctx.strokeStyle = '#3A3A3A';
       ctx.lineWidth = lw + 0.6;
       ctx.lineJoin = 'round';
       ctx.stroke();
@@ -191,12 +193,12 @@ const LAP = __LAP_DATA__;
         const p = pts[upto];
         ctx.beginPath();
         ctx.arc(px(p), py(p), Math.max(9, lw * 1.9), 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(250,105,20,0.45)';
+        ctx.strokeStyle = 'rgba(255,102,0,0.45)';
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(px(p), py(p), Math.max(3.5, lw * 0.8), 0, Math.PI * 2);
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = '#F4F4F4';
         ctx.fill();
       }
     }
