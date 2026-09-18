@@ -34,3 +34,14 @@
   for = "/lap.json"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+
+# The icon URLs carry a ?v= version, so they can be cached for a long time.
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/atlas-mark.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

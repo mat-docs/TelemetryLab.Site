@@ -81,8 +81,11 @@ DOCUMENT = """<!doctype html>
 
 <!-- No web font: @atlas/design-system's one font role is a native stack
      (Helvetica Neue / Arial / system-ui), so there is nothing to fetch. -->
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/atlas-mark.png">
+<!-- ?v= busts the browser's favicon cache, which otherwise kept the old
+     inline SVG icon for the life of the tab. Bump it if the icon changes. -->
+<link rel="icon" type="image/png" sizes="256x256" href="/atlas-mark.png?v=2">
+<link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/atlas-mark.png?v=2">
 {analytics}
 <style>
 {css}
