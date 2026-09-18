@@ -495,8 +495,7 @@
     background: var(--surface);
     padding: 24px 26px;
     /* A simulated terminal readout - a URL and log lines - so this one keeps a
-       monospace. The brand does not specify one; the system stack is used so no
-       second typeface competes with Montserrat. */
+       monospace: the design system's --font-mono stack. */
     font-family: var(--mono);
     font-size: 12.5px;
     line-height: 2;
